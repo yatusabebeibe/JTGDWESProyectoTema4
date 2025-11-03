@@ -1,0 +1,3 @@
+DROP USER IF EXISTS 'userJTGDWESProyectoTema4'@'%';
+
+DROP DATABASE if EXISTS DBJTGDWESProyectoTema4;
