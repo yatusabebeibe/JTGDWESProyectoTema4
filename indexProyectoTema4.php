@@ -60,10 +60,17 @@
         li {
             background: #ecf0f1;
             margin: 10px 0;
-            padding: 15px;
+            padding: 0px;
             border-left: 5px solid #34db34;
             transition: 0.3s;
             border-radius: 8px;
+            & a {
+                display: block;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                padding: 15px;
+            }
         }
         li:hover {
             background: #d6f8d6;
@@ -111,9 +118,9 @@
     <!-- 😼 -->
     <main>
         <ul>
-            <li><a href="">Borrado</a></li>
-            <li><a href="">Creacion</a></li>
-            <li><a href="">Carga Inicial</a></li>
+            <li><a target="_blank" href="./mostrarcodigo/borrarDB.php">Borrado</a></li>
+            <li><a target="_blank" href="./mostrarcodigo/crearDB.php">Creacion</a></li>
+            <li><a target="_blank" href="./mostrarcodigo/cargaInicialDB.php">Carga Inicial</a></li>
         </ul>
         <table>
             <thead>
