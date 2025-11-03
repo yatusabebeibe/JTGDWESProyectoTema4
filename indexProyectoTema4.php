@@ -32,6 +32,11 @@
             border-collapse: separate;
             border-spacing: 0 10px;
             margin-top: 0px;
+            & tr > td:nth-child(n+3) {
+                a {display: block; margin-top: 10px; margin-bottom: 10px;}
+                a:first-child {margin-top: 0px;}
+                a:last-child {margin-bottom: 0px;}
+            }
         }
         th, td {
             padding: 12px 15px;
