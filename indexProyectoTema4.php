@@ -141,8 +141,8 @@
                     <td>1</td>
                     <td>Conexión a la base de datos con la cuenta usuario y tratamiento de errores. <i>Utilizar excepciones automáticas siempre que sea posible en todos los ejercicios.</i></td>
                     <td>
-                        <a href="./codigoPHP/ejercicio01.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio01.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio01.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio01PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio01.php" target="_self"><!-- Ejecutar --></a>
