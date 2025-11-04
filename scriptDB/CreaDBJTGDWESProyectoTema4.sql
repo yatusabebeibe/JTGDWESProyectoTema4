@@ -1,0 +1,15 @@
+CREATE DATABASE IF NOT EXISTS DBJTGDWESProyectoTema4;
+
+USE DBJTGDWESProyectoTema4;
+
+CREATE Table IF NOT EXISTS T02_Departamento(
+    T02_CodDepartamento VARCHAR(3) NOT NULL PRIMARY KEY,
+    T02_DescDepartamento VARCHAR(255) NOT NULL,
+    T02_FechaCreacionDepartamento DATETIME NOT NULL,
+    T02_VolumenDeNegocio FLOAT NOT NULL,
+    T02_FechaBajaDepartamento DATETIME
+);
+
+CREATE USER IF NOT EXISTS 'userJTGDWESProyectoTema4'@'%' IDENTIFIED BY 'paso';
+GRANT ALL PRIVILEGES ON DBJTGDWESProyectoTema4.* TO 'userJTGDWESProyectoTema4'@'%';
+FLUSH PRIVILEGES;

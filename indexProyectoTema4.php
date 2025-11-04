@@ -20,7 +20,7 @@
             margin: 0;
         }
         main {
-            max-width: 900px;
+            max-width: 1250px;
             margin: 30px auto;
             padding: 20px;
             background: white;
@@ -31,7 +31,12 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 0 10px;
-            margin-top: 20px;
+            margin-top: 0px;
+            & tr > td:nth-child(n+3) {
+                a {display: block; margin-top: 10px; margin-bottom: 10px;}
+                a:first-child {margin-top: 0px;}
+                a:last-child {margin-bottom: 0px;}
+            }
         }
         th, td {
             padding: 12px 15px;
@@ -48,6 +53,34 @@
         }
         tr:hover td {
             background: #d6f8d6;
+        }
+        ul {
+            margin: 0;
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
+        }
+        li {
+            background: #ecf0f1;
+            margin: 10px 0;
+            padding: 0px;
+            border-left: 5px solid #34db34;
+            transition: 0.3s;
+            border-radius: 8px;
+            & a {
+                display: block;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                padding: 15px;
+            }
+        }
+        li:hover {
+            background: #d6f8d6;
+            border-left: 5px solid #70bc1a;
+            transform: scale(1.03);
         }
         a {
             text-decoration: none;
@@ -75,7 +108,7 @@
                 text-decoration: none;
             }
         }
-        tr > td > a {line-height: 15px;}
+        tr > td > a {line-height: 14px;}
         table > * > tr > *  {text-align: center;}
         table > * > tr > *:nth-child(2)  {text-align: left;}
     </style>
@@ -89,13 +122,18 @@
     </header>
     <!-- 😼 -->
     <main>
+        <ul>
+            <li><a target="_blank" href="./mostrarcodigo/borrarDB.php">Borrado</a></li>
+            <li><a target="_blank" href="./mostrarcodigo/crearDB.php">Creacion</a></li>
+            <li><a target="_blank" href="./mostrarcodigo/cargaInicialDB.php">Carga Inicial</a></li>
+        </ul>
         <table>
             <thead>
                 <tr>
-                    <th style="width: max-content">Nº Ej</th>
-                    <th style="width: 60%;">Ejercicio</th>
-                    <th style="width: 16%;">ED</th>
-                    <th style="width: 16%;">EE</th>
+                    <th style="width: 50px; max-width: 50px;">Nº Ej</th>
+                    <th style="width: calc(100% - 50px - 145px*2);">Ejercicio</th>
+                    <th style="width: 145px; max-width: 145px;">PDO</th>
+                    <th style="width: 145px; max-width: 145px;">MySQLi</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,65 +141,97 @@
                     <td>1</td>
                     <td>Conexión a la base de datos con la cuenta usuario y tratamiento de errores. <i>Utilizar excepciones automáticas siempre que sea posible en todos los ejercicios.</i></td>
                     <td>
-                        <a href="./codigoPHP/ejercicio01.php" target="_self">Ejecutar SQL</a>
-                        <a href="./codigoPHP/ejercicio01.php" target="_self">Ejecutar PHP</a>
-                        <a href="./mostrarcodigo/muestraEjercicio01.php" target="_self">Ver código</a>
+                        <a href="./codigoPHP/ejercicio01.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio01PDO.php" target="_self">Ver código</a>
                     </td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio01.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio01.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio01.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
                 <tr>
                     <td>2</td>
                     <td>Mostrar el contenido de la tabla Departamento y el número de registros.</td>
-                    <td><a href="./codigoPHP/ejercicio02.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio02.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio02.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio02.php" target="_self"><!-- Ver código --></a>
+                    </td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio02.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio02.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
                 <tr>
                     <td>3</td>
                     <td>Formulario para añadir un departamento a la tabla Departamento con validación de entrada y control de errores.</td>
-                    <td><a href="./codigoPHP/ejercicio03.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio03.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio03.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio03.php" target="_self"><!-- Ver código --></a>
+                    </td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio03.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio03.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
                 <tr>
                     <td>4</td>
                     <td>Formulario de búsqueda de departamentos por descripción (por una parte del campo DescDepartamento, si el usuario no pone nada deben aparecer todos los departamentos).</td>
-                    <td><a href="./codigoPHP/ejercicio04.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio04.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio04.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio04.php" target="_self"><!-- Ver código --></a>
+                    </td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio04.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio04.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
                 <tr>
                     <td>5</td>
                     <td>Pagina web que añade tres registros a nuestra tabla Departamento utilizando tres instrucciones insert y una transacción, de tal forma que se añadan los tres registros o no se añada ninguno.</td>
-                    <td><a href="./codigoPHP/ejercicio05.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio05.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio05.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio05.php" target="_self"><!-- Ver código --></a>
+                    </td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio05.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio05.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
                 <tr>
                     <td>6</td>
                     <td>Pagina web que cargue registros en la tabla Departamento desde un array departamentosnuevos utilizando una consulta preparada. <i>(Después de programar y entender este ejercicio, modificar los ejercicios anteriores para que utilicen consultas preparadas). Probar consultas preparadas sin bind, pasando los parámetros en un array a execute.</i></td>
-                    <td><a href="./codigoPHP/ejercicio06.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio06.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio06.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio06.php" target="_self"><!-- Ver código --></a>
+                    </td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio06.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio06.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
                 <tr>
                     <td>7</td>
                     <td>Página web que toma datos (código y descripción) de un fichero xml y los añade a la tabla Departamento de nuestra base de datos. (IMPORTAR). El fichero importado se encuentra en el directorio .../tmp/ del servidor.</td>
-                    <td><a href="./codigoPHP/ejercicio07.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio07.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio07.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio07.php" target="_self"><!-- Ver código --></a>
+                    </td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio07.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio07.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
                 <tr>
                     <td>8</td>
                     <td>Página web que toma datos (código y descripción) de la tabla Departamento y guarda en un fichero departamento.xml. (COPIA DE SEGURIDAD / EXPORTAR). El fichero exportado se encuentra en el directorio .../tmp/ del servidor.</td>
-                    <td><a href="./codigoPHP/ejercicio08.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio08.php" target="_self">Ver código</a></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td>Aplicación resumen MtoDeDepartamentosTema4. (Incluir PHPDoc y versionado en el repositorio GIT)</td>
-                    <td><a href="./codigoPHP/ejercicio09.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio09.php" target="_self">Ver código</a></td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td>Aplicación resumen MtoDeDepartamentos POO y multicapa</td>
-                    <td><a href="./codigoPHP/ejercicio10.php" target="_self">Ejecutar</a></td>
-                    <td><a href="./mostrarcodigo/muestraEjercicio10.php" target="_self">Ver código</a></td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio08.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio08.php" target="_self"><!-- Ver código --></a>
+                    </td>
+                    <td>
+                        <a href="./codigoPHP/ejercicio08.php" target="_self"><!-- Ejecutar --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio08.php" target="_self"><!-- Ver código --></a>
+                    </td>
                 </tr>
             </tbody>
         </table>
