@@ -153,8 +153,8 @@
                     <td>2</td>
                     <td>Mostrar el contenido de la tabla Departamento y el número de registros.</td>
                     <td>
-                        <a href="./codigoPHP/ejercicio02.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio02.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio02.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio02.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio02.php" target="_self"><!-- Ejecutar --></a>
