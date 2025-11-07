@@ -165,8 +165,8 @@
                     <td>3</td>
                     <td>Formulario para añadir un departamento a la tabla Departamento con validación de entrada y control de errores.</td>
                     <td>
-                        <a href="./codigoPHP/ejercicio03PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio03.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio03PDO.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio03PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio03MySQLi.php" target="_self"><!-- Ejecutar --></a>

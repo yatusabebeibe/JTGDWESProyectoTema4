@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Jesús Temprano - Ej 3, Tema4</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            background: #fff;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,.1);
+        }
+        #campos div {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        input[type="submit"] {
+            margin-top: 15px;
+            padding: 10px;
+            border: none;
+            background: #4e9645;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: .2s;
+        }
+        input[type="submit"]:hover {
+            background: #4e9645;
+        }
+        input[obligatorio]{
+            background-color: #fbff0042;
+        }
+        input[disabled]{
+            background-color: #46464641;
+        }
+        .errorCampo {
+            font-size: 13px;
+            margin-top: 3px;
+        }
+        .resultado {
+            max-width: 450px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,.1);
+        }
+    </style>
+</head>
+<body>
+
+<?php
+
+    /*  @author Jesús Temprano Gallego
+     *  @since 07/11/2025
+     */
+
+    echo "<h1>Formulario añadir departamento.</h1>";
+    
+    include_once("../core/231018libreriaValidacion.php");
+
+
+    const HOST = "10.199.10.22";
+    const DBName = "DBJTGDWESProyectoTema4";
+
+    const DSN = "mysql:host=".HOST.";dbname=".DBName;
+    const DBUserName = "userJTGDWESProyectoTema4";
+    const DBPassword = "paso";
+
+
+    $entradaOK = true;
+    $aErrores = ["codigo"=>'',"descripcion"=>'',"volumen"=>'',"sql"=>''];
+    $aRespuestas = ["codigo"=>null,"descripcion"=>null,"volumen"=>null];
+
+    if (!isset($_REQUEST["enviar"])) {
+        $entradaOK = false;
+    } else {
+        $aRespuestas["codigo"] = $_REQUEST['codigo'];
+        $aRespuestas["descripcion"] = $_REQUEST['descripcion'];
+        $aRespuestas["volumen"] = $_REQUEST['volumen'];
+            
+        if (!is_null(validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1))) {
+            $aErrores["codigo"] = "El codigo tiene ser de tener 3 letras.";
+        }
+        else {
+            $aRespuestas["codigo"] = strtoupper($_REQUEST['codigo']);
+            try {
+                $miDB = new PDO(DSN, DBUserName, DBPassword);
+
+                $consulta = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
+
+                $registro = $consulta -> fetch();
+
+                if (!empty($registro[0])) {
+                    $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
+                }
+            } catch (PDOException $error) {
+                $aErrores["sql"] = $error->getMessage();
+            }
+        }
+
+        if (!is_null(validacionFormularios::comprobarAlfabetico(cadena:$aRespuestas["descripcion"],obligatorio: 1))) {
+            $aErrores["descripcion"] = "El nombre no puede estar vacío.";
+        }
+
+        if (!is_null(validacionFormularios::comprobarFloat($aRespuestas["volumen"], min:0, obligatorio:1))) {
+            $aErrores["volumen"] = "La edad debe ser un número mayor a 0.";
+        }
+
+        foreach ($aErrores as $mensaje) {
+            if (!empty($mensaje)) $entradaOK = false;
+        }
+    }
+
+    ?>
+    <form method="post">
+        <div id="campos">
+            <div>
+                <label class="tituloCampo">Codigo:</label>
+                <input type="text" name="codigo" value="<?= $aRespuestas['codigo'] ?>" obligatorio>
+                <span class="errorCampo" style="color:red;"><?= $aErrores['codigo'] ?></span>
+                <span class="errorCampo" style="color:red;"><?= $aErrores['sql'] ?></span>
+            </div>
+            <br>
+            
+            <div>
+                <label class="tituloCampo">Descripcion:</label>
+                <input type="text" name="descripcion" value="<?= $aRespuestas['descripcion'] ?>" obligatorio>
+                <span class="errorCampo" style="color:red;"><?= $aErrores['descripcion'] ?></span>
+            </div>
+            <br>
+
+            <div>
+                <label class="tituloCampo">Descripcion:</label>
+                <input type="datetime-local" name="descripcion" value="<?= (new DateTime)->format('Y-m-d\TH:i') ?>" disabled>
+                <span class="errorCampo" style="color:red;"><?= $aErrores['descripcion'] ?></span>
+            </div>
+            <br>
+
+            <div>
+                <label class="tituloCampo">Volumen:</label>
+                <input type="number" step="0.01" name="volumen" value="<?= $aRespuestas['volumen'] ?>" obligatorio>
+                <span class="errorCampo" style="color:red;"><?= $aErrores['volumen'] ?></span>
+            </div>
+            <br>
+
+            <input type="submit" name="enviar" value="Enviar">
+        </div>
+    </form>
+        <?php
+        if ($entradaOK) {
+            echo '<div class="resultado">';
+            try {
+                $miDB = new PDO(DSN, DBUserName, DBPassword);
+
+                $consulta = <<<EOT
+                INSERT INTO T02_Departamento VALUES(
+                    '{$aRespuestas["codigo"]}',
+                    '{$aRespuestas["descripcion"]}',
+                    NOW(),
+                    {$aRespuestas["volumen"]},
+                    NULL
+                );
+                EOT;
+                
+                $nRegistros = $miDB -> exec($consulta);
+
+                echo "<h3>Se ha añadido $nRegistros registro con estos datos:</h3>";
+                echo "<p><strong>Codigo:</strong> {$aRespuestas["codigo"]}</p>";
+                echo "<p><strong>Descripcion:</strong> {$aRespuestas["descripcion"]}</p>";
+                echo "<p><strong>Volumen:</strong> {$aRespuestas['volumen']}</p>";
+                
+            } catch (PDOException $error) {
+                echo "<h3>ERROR SQL:</h3>";
+                echo "<p><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
+                echo "<p><strong>Codigo:</strong> ".$error->getCode()."</p>";
+            }
+            echo "</div>";
+        }
+        ?>
+</body>
+</html>
