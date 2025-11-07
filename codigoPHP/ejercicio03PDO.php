@@ -55,12 +55,39 @@
             margin-top: 3px;
         }
         .resultado {
-            max-width: 450px;
+            max-width: 1200px;
+            width: max-content;
             margin: 20px auto;
             background: #fff;
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 0 10px rgba(0,0,0,.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 15px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table th {
+            background: #e6e6e6;
+            font-weight: bold;
+            
+        }
+
+        table tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        table tr:hover {
+            background: #e2f3e2;
         }
     </style>
 </head>
@@ -163,35 +190,46 @@
         </div>
     </form>
         <?php
-        if ($entradaOK) {
             echo '<div class="resultado">';
             try {
                 $miDB = new PDO(DSN, DBUserName, DBPassword);
-
-                $consulta = <<<EOT
-                INSERT INTO T02_Departamento VALUES(
-                    '{$aRespuestas["codigo"]}',
-                    '{$aRespuestas["descripcion"]}',
-                    NOW(),
-                    {$aRespuestas["volumen"]},
-                    NULL
-                );
-                EOT;
                 
-                $nRegistros = $miDB -> exec($consulta);
-
-                echo "<h3>Se ha añadido $nRegistros registro con estos datos:</h3>";
-                echo "<p><strong>Codigo:</strong> {$aRespuestas["codigo"]}</p>";
-                echo "<p><strong>Descripcion:</strong> {$aRespuestas["descripcion"]}</p>";
-                echo "<p><strong>Volumen:</strong> {$aRespuestas['volumen']}</p>";
+                $query = $miDB->query("SELECT * FROM T02_Departamento");
                 
-            } catch (PDOException $error) {
+                if ($query -> execute()) {
+                    echo "<table>";
+                    
+                    $numColumnas = $query->columnCount();
+                    
+                    echo "<thead><tr>";
+                    for ($nColActual = 0; $nColActual < $numColumnas; $nColActual++) {
+                        $nombreColumna = $query->getColumnMeta($nColActual)["name"];
+                        echo "<th>{$nombreColumna}</th>";
+                    }
+                    echo "</tr></thead>";
+                    
+                    $nRegistros=0;
+                    while ($registro = $query -> fetch(PDO::FETCH_OBJ)) {
+                        $nRegistros++;
+                        echo "<tr>";
+                        foreach ($registro as $value) {
+                            echo "<td>$value</td>";
+                        }
+                        echo "</tr>";
+                        }
+                    echo "</table>";
+
+                    echo "<p>Habia {$nRegistros} registros.</p>";
+                }
+                else {
+                    echo "No se pudo ejecutar la consulta";
+                }
+            } catch (PDOException $th) {
                 echo "<h3>ERROR SQL:</h3>";
                 echo "<p><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
                 echo "<p><strong>Codigo:</strong> ".$error->getCode()."</p>";
             }
             echo "</div>";
-        }
         ?>
 </body>
 </html>
