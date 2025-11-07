@@ -28,6 +28,7 @@
             padding: 8px;
             border-radius: 6px;
             border: 1px solid #ccc;
+            /* width: min-content; */
         }
         input[type="submit"] {
             margin-top: 15px;
@@ -78,14 +79,13 @@
 
     const HOST = "10.199.10.22";
     const DBName = "DBJTGDWESProyectoTema4";
-
     const DSN = "mysql:host=".HOST.";dbname=".DBName;
     const DBUserName = "userJTGDWESProyectoTema4";
     const DBPassword = "paso";
 
 
     $entradaOK = true;
-    $aErrores = ["codigo"=>'',"descripcion"=>'',"volumen"=>'',"sql"=>''];
+    $aErrores = ["codigo"=>'',"descripcion"=>'',"volumen"=>''];
     $aRespuestas = ["codigo"=>null,"descripcion"=>null,"volumen"=>null];
 
     if (!isset($_REQUEST["enviar"])) {
@@ -98,20 +98,20 @@
         if (!is_null(validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1))) {
             $aErrores["codigo"] = "El codigo tiene ser de tener 3 letras.";
         }
+        else if ($aRespuestas["codigo"] !== strtoupper($_REQUEST['codigo'])) {
+            $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
+        }
         else {
-            $aRespuestas["codigo"] = strtoupper($_REQUEST['codigo']);
             try {
                 $miDB = new PDO(DSN, DBUserName, DBPassword);
 
-                $consulta = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
+                $statement = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
 
-                $registro = $consulta -> fetch();
-
-                if (!empty($registro[0])) {
+                if ($statement->rowCount() >= 1) {
                     $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
                 }
             } catch (PDOException $error) {
-                $aErrores["sql"] = $error->getMessage();
+                $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
             }
         }
 
@@ -135,7 +135,6 @@
                 <label class="tituloCampo">Codigo:</label>
                 <input type="text" name="codigo" value="<?= $aRespuestas['codigo'] ?>" obligatorio>
                 <span class="errorCampo" style="color:red;"><?= $aErrores['codigo'] ?></span>
-                <span class="errorCampo" style="color:red;"><?= $aErrores['sql'] ?></span>
             </div>
             <br>
             
