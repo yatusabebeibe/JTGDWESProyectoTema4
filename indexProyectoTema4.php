@@ -146,7 +146,7 @@
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio01MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio01.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio01MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
                 <tr>
@@ -154,11 +154,11 @@
                     <td>Mostrar el contenido de la tabla Departamento y el número de registros.</td>
                     <td>
                         <a href="./codigoPHP/ejercicio02PDO.php" target="_self">Ejecutar</a>
-                        <a href="./mostrarcodigo/muestraEjercicio02.php" target="_self">Ver código</a>
+                        <a href="./mostrarcodigo/muestraEjercicio02PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio02MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio02.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio02MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
                 <tr>
@@ -170,7 +170,7 @@
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio03MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio03.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio03MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
                 <tr>
@@ -178,11 +178,11 @@
                     <td>Formulario de búsqueda de departamentos por descripción (por una parte del campo DescDepartamento, si el usuario no pone nada deben aparecer todos los departamentos).</td>
                     <td>
                         <a href="./codigoPHP/ejercicio04PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio04.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio04PDO.php" target="_self"><!-- Ver código --></a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio04MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio04.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio04MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
                 <tr>
@@ -190,11 +190,11 @@
                     <td>Pagina web que añade tres registros a nuestra tabla Departamento utilizando tres instrucciones insert y una transacción, de tal forma que se añadan los tres registros o no se añada ninguno.</td>
                     <td>
                         <a href="./codigoPHP/ejercicio05PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio05.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio05PDO.php" target="_self"><!-- Ver código --></a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio05MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio05.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio05MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
                 <tr>
@@ -202,11 +202,11 @@
                     <td>Pagina web que cargue registros en la tabla Departamento desde un array departamentosnuevos utilizando una consulta preparada. <i>(Después de programar y entender este ejercicio, modificar los ejercicios anteriores para que utilicen consultas preparadas). Probar consultas preparadas sin bind, pasando los parámetros en un array a execute.</i></td>
                     <td>
                         <a href="./codigoPHP/ejercicio06PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio06.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio06PDO.php" target="_self"><!-- Ver código --></a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio06MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio06.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio06MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
                 <tr>
@@ -214,11 +214,11 @@
                     <td>Página web que toma datos (código y descripción) de un fichero xml y los añade a la tabla Departamento de nuestra base de datos. (IMPORTAR). El fichero importado se encuentra en el directorio .../tmp/ del servidor.</td>
                     <td>
                         <a href="./codigoPHP/ejercicio07PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio07.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio07PDO.php" target="_self"><!-- Ver código --></a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio07MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio07.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio07MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
                 <tr>
@@ -226,11 +226,11 @@
                     <td>Página web que toma datos (código y descripción) de la tabla Departamento y guarda en un fichero departamento.xml. (COPIA DE SEGURIDAD / EXPORTAR). El fichero exportado se encuentra en el directorio .../tmp/ del servidor.</td>
                     <td>
                         <a href="./codigoPHP/ejercicio08PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio08.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio08PDO.php" target="_self"><!-- Ver código --></a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio08MySQLi.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio08.php" target="_self"><!-- Ver código --></a>
+                        <a href="./mostrarcodigo/muestraEjercicio08MySQLi.php" target="_self"><!-- Ver código --></a>
                     </td>
                 </tr>
             </tbody>
