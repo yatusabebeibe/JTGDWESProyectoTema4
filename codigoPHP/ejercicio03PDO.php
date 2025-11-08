@@ -132,9 +132,9 @@
             try {
                 $miDB = new PDO(DSN, DBUserName, DBPassword);
 
-                $statement = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
+                $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
 
-                if ($statement->rowCount() >= 1) {
+                if ($query->rowCount() >= 1) {
                     $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
                 }
             } catch (PDOException $error) {
@@ -193,8 +193,21 @@
             echo '<div class="resultado">';
             try {
                 $miDB = new PDO(DSN, DBUserName, DBPassword);
+
+                if ($entradaOK) {
+                    $statement = <<<EOT
+                    INSERT INTO T02_Departamento VALUES(
+                        '{$aRespuestas["codigo"]}',
+                        '{$aRespuestas["descripcion"]}',
+                        NOW(),
+                        {$aRespuestas["volumen"]},
+                        NULL
+                    );
+                    EOT;
+                    $miDB -> exec($statement);
+                }
                 
-                $query = $miDB->query("SELECT * FROM T02_Departamento");
+                $query = $miDB->query("SELECT * FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
                 
                 if ($query -> execute()) {
                     echo "<table>";
@@ -224,7 +237,7 @@
                 else {
                     echo "No se pudo ejecutar la consulta";
                 }
-            } catch (PDOException $th) {
+            } catch (PDOException $error) {
                 echo "<h3>ERROR SQL:</h3>";
                 echo "<p><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
                 echo "<p><strong>Codigo:</strong> ".$error->getCode()."</p>";
