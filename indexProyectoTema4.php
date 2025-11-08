@@ -177,8 +177,8 @@
                     <td>4</td>
                     <td>Formulario de búsqueda de departamentos por descripción (por una parte del campo DescDepartamento, si el usuario no pone nada deben aparecer todos los departamentos).</td>
                     <td>
-                        <a href="./codigoPHP/ejercicio04PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio04PDO.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio04PDO.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio04PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio04MySQLi.php" target="_self"><!-- Ejecutar --></a>
