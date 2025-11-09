@@ -112,7 +112,7 @@
     <form method="post">
         <div id="campos">
             <div>
-                <label class="tituloCampo">Codigo:</label>
+                <label class="tituloCampo">Tres codigos separados por coma (XXX,YYY, ZZZ):</label>
                 <!-- Ponemos los valores del array respuesta para que el usuario no tenga que escribirlo de nuevo en caso de error -->
                 <input type="text" name="codigo" value="<?= $aRespuestas['codigo'] ?>" obligatorio>
                 <!-- Si ha habido un error lo muestra -->
