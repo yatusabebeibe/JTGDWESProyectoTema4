@@ -60,8 +60,8 @@
             $aErrores["descripcion"] = $error;
         }
 
-        if (!is_null(validacionFormularios::comprobarFloat($aRespuestas["volumen"], min:0, obligatorio:1))) {
-            $aErrores["volumen"] = "La edad debe ser un número mayor a 0.";
+        if ($error = validacionFormularios::comprobarFloat($aRespuestas["volumen"], min:0, obligatorio:1)) {
+            $aErrores["volumen"] = $error;
         }
 
         foreach ($aErrores as $mensaje) {

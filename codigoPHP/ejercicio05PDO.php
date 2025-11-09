@@ -83,8 +83,8 @@
             $aErrores["descripcion"] = $error;
         }
 
-        if (!is_null(validacionFormularios::comprobarFloat($aRespuestas["volumen"], min:0, obligatorio:1))) {
-            $aErrores["volumen"] = "La edad debe ser un número mayor a 0.";
+        if ($error = validacionFormularios::comprobarFloat($aRespuestas["volumen"], min:0, obligatorio:1)) {
+            $aErrores["volumen"] = $error;
         }
 
         foreach ($aErrores as $mensaje) {
@@ -150,9 +150,9 @@
                         $miDB ->commit();
                     } catch (PDOException $error) {
                         $miDB->rollBack();
-                        echo "<h3>ERROR EN LA TRANSACCION SQL:</h3>";
-                        echo "<p><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
-                        echo "<p><strong>Codigo:</strong> ".$error->getCode()."</p>";
+                        echo "<h3 class=\"error\">ERROR EN LA TRANSACCION SQL:</h3>";
+                        echo "<p class=\"error\"><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
+                        echo "<p class=\"error\"><strong>Codigo:</strong> ".$error->getCode()."</p>";
                     }
                 }
                 
