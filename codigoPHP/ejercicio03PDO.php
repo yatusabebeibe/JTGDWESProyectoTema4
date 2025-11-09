@@ -36,9 +36,9 @@
         $aRespuestas["descripcion"] = $_REQUEST['descripcion'];
         $aRespuestas["volumen"] = $_REQUEST['volumen'];
             
-        if (!is_null(validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1))) {
-            $aErrores["codigo"] = "El codigo tiene ser de tener 3 letras.";
-        }
+        if ($error = validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1)) {
+                $aErrores["codigo"] = $error;
+            }
         else if ($aRespuestas["codigo"] !== strtoupper($_REQUEST['codigo'])) {
             $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
         }
@@ -56,8 +56,8 @@
             }
         }
 
-        if (!is_null(validacionFormularios::comprobarAlfabetico(cadena:$aRespuestas["descripcion"],obligatorio: 1))) {
-            $aErrores["descripcion"] = "El nombre no puede estar vacío.";
+        if ($error = validacionFormularios::comprobarAlfaNumerico(cadena:$aRespuestas["descripcion"],obligatorio: 1)) {
+            $aErrores["descripcion"] = $error;
         }
 
         if (!is_null(validacionFormularios::comprobarFloat($aRespuestas["volumen"], min:0, obligatorio:1))) {
