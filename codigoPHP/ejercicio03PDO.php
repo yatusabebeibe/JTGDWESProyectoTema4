@@ -87,9 +87,9 @@
             <br>
 
             <div>
-                <label class="tituloCampo">Descripcion:</label>
-                <input type="datetime-local" name="descripcion" value="<?= (new DateTime)->format('Y-m-d\TH:i') ?>" disabled>
-                <span class="errorCampo" style="color:red;"><?= $aErrores['descripcion'] ?></span>
+                <label class="tituloCampo">Fecha Creacion:</label>
+                <input type="datetime-local" name="fechaCreacion" value="<?= (new DateTime)->format('Y-m-d\TH:i') ?>" disabled>
+                <span class="errorCampo" style="color:red;"></span>
             </div>
             <br>
 
