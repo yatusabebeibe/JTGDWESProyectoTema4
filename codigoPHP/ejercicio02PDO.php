@@ -23,51 +23,58 @@
 
     echo "<h1>Mostrar el contenido de la tabla Departamento y el número de registros.</h1>";
 
+    /*  Constantes para la connexion con la DB.
+        Se pueden usar tanto `const` como `define()` en la mayoria de casos.
+        En esta pagina web explican las diferencias y en que casos se usa uno u otro:
+           https://mclibre.org/consultar/php/lecciones/php-constantes.html
+    */
     const HOST = "10.199.10.22";
     const DBName = "DBJTGDWESProyectoTema4";
-
     const DSN = "mysql:host=".HOST.";dbname=".DBName;
     const DBUserName = "userJTGDWESProyectoTema4";
     const DBPassword = "paso";
 
     try {
+        // Iniciamos la conexion con la base de datos
         $miDB = new PDO(DSN, DBUserName, DBPassword);
         
-        $consulta = $miDB->query("SELECT * FROM T02_Departamento");
+        // Variable con un query para obtener todos los datos de la tabla
+        $query = $miDB->query("SELECT * FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
         
-        if ($consulta -> execute()) {
+        // Esto intenta crear una tabla con los resultados del query
+        if ($query -> execute()) { // Si el query se ejecuta correctamente
             echo "<table>";
             
-            $numColumnas = $consulta->columnCount();
-            
+
             echo "<thead><tr>";
-            for ($nColActual = 0; $nColActual < $numColumnas; $nColActual++) {
-                $nombreColumna = $consulta->getColumnMeta($nColActual)["name"];
+
+            // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
+            for ($i = 0; $i < $query->columnCount(); $i++) { // $i representa el índice de la columna actual
+                // Obtenemos el nombre de la columna y lo ponemos en la tabla html
+                $nombreColumna = $query->getColumnMeta($i)["name"];
                 echo "<th>{$nombreColumna}</th>";
             }
             echo "</tr></thead>";
             
-            $nRegistros=0;
-            while ($registro = $consulta -> fetch(PDO::FETCH_OBJ)) {
-                $nRegistros++;
+            // Obtiene los registros que ha obtenido el query
+            while ($registro = $query -> fetch(PDO::FETCH_OBJ)) { // Mientras haya mas registros
                 echo "<tr>";
+                // Mete cada registro en la tabla
                 foreach ($registro as $value) {
-                    ?>
-                    <td><?= $value ?></td>
-                    <?php
+                    echo "<td>$value</td>";
                 }
                 echo "</tr>";
-                }
+            }
             echo "</table>";
 
-            echo "<p>Habia {$nRegistros} registros.</p>";
+            // Mostramos cuantos registros tenia la tabla
+            echo "<p>Habia {$query->rowCount()} registros.</p>";
         }
-        else {
+        else { // Ssi da error al hacer el query
             echo "No se pudo ejecutar la consulta";
         }
-    } catch (PDOException $th) {
-        echo "Mensaje: ".$th->getMessage()."<br>";
-        echo "Codigo: ".$th->getCode()."<br>";
+    } catch (PDOException $error) { // Esto se ejecuta si da error al iniciar la conexion, insertar los datos, o hacer el query
+        echo '<h3 class="error">ERROR SQL:</h3>';
+        echo '<p class="error"><strong>Mensaje:</strong> '.$error->getMessage()."</p>";
     }
-    
 ?>
