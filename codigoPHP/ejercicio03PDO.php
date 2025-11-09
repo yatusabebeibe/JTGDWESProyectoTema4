@@ -75,28 +75,28 @@
             <div>
                 <label class="tituloCampo">Codigo:</label>
                 <input type="text" name="codigo" value="<?= $aRespuestas['codigo'] ?>" obligatorio>
-                <span class="errorCampo" style="color:red;"><?= $aErrores['codigo'] ?></span>
+                <span class="errorCampo"><?= $aErrores['codigo'] ?></span>
             </div>
             <br>
             
             <div>
                 <label class="tituloCampo">Descripcion:</label>
                 <input type="text" name="descripcion" value="<?= $aRespuestas['descripcion'] ?>" obligatorio>
-                <span class="errorCampo" style="color:red;"><?= $aErrores['descripcion'] ?></span>
+                <span class="errorCampo"><?= $aErrores['descripcion'] ?></span>
             </div>
             <br>
 
             <div>
                 <label class="tituloCampo">Fecha Creacion:</label>
                 <input type="datetime-local" name="fechaCreacion" value="<?= (new DateTime)->format('Y-m-d\TH:i') ?>" disabled>
-                <span class="errorCampo" style="color:red;"></span>
+                <span class="errorCampo"></span>
             </div>
             <br>
 
             <div>
                 <label class="tituloCampo">Volumen:</label>
                 <input type="number" step="0.01" name="volumen" value="<?= $aRespuestas['volumen'] ?>" obligatorio>
-                <span class="errorCampo" style="color:red;"><?= $aErrores['volumen'] ?></span>
+                <span class="errorCampo"><?= $aErrores['volumen'] ?></span>
             </div>
             <br>
 
@@ -152,9 +152,9 @@
                     echo "No se pudo ejecutar la consulta";
                 }
             } catch (PDOException $error) {
-                echo "<h3>ERROR SQL:</h3>";
-                echo "<p><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
-                echo "<p><strong>Codigo:</strong> ".$error->getCode()."</p>";
+                echo "<h3 class=\"error\">ERROR SQL:</h3>";
+                echo "<p class=\"error\"><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
+                echo "<p class=\"error\"><strong>Codigo:</strong> ".$error->getCode()."</p>";
             }
             echo "</div>";
         ?>

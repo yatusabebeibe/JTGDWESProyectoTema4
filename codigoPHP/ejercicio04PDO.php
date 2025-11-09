@@ -101,9 +101,9 @@
                     echo "No se pudo ejecutar la consulta";
                 }
             } catch (PDOException $error) {
-                echo "<h3>ERROR SQL:</h3>";
-                echo "<p><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
-                echo "<p><strong>Codigo:</strong> ".$error->getCode()."</p>";
+                echo "<h3 class=\"error\">ERROR SQL:</h3>";
+                echo "<p class=\"error\"><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
+                echo "<p class=\"error\"><strong>Codigo:</strong> ".$error->getCode()."</p>";
             }
             echo "</div>";
         ?>
