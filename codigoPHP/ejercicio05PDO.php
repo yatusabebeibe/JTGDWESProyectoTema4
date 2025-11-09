@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Jesús Temprano - Ej 3, Tema4</title>
+    <title>Jesús Temprano - Ej 5, Tema4</title>
     <link rel="stylesheet" href="../webroot/css/stylesForm.css">
 </head>
 <body>
@@ -10,10 +10,10 @@
 <?php
 
     /*  @author Jesús Temprano Gallego
-     *  @since 07/11/2025
+     *  @since 08/11/2025
      */
 
-    echo "<h1>Formulario añadir departamento.</h1>";
+    echo "<h1>Insertar 3 elementos a la vez.</h1>";
     
     include_once("../core/231018libreriaValidacion.php");
 
@@ -42,32 +42,50 @@
         $aRespuestas["codigo"] = $_REQUEST['codigo'];
         $aRespuestas["descripcion"] = $_REQUEST['descripcion'];
         $aRespuestas["volumen"] = $_REQUEST['volumen'];
-        
+
+        // Dividimos el string por sus comas con el explode() para obtener un array con los codigos
+        $aCodigos = explode(",",$aRespuestas["codigo"]);
+        foreach ($aCodigos as $key => $value) {
+            // Le quitamos los espacios de delante y atras
+            $aCodigos[$key] = trim($value);
+        }
+        // Eliminamos lo duplicados
+        $aCodigos = array_unique($aCodigos);
+
         // Validamos todos los datos:
 
-        // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
-        if ($error = validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1)) {
-            $aErrores["codigo"] = $error; // Si da error se lo pasamos a el array de errores
+        // Comprueba que haya 3 codigos
+        if (count($aCodigos) != 3) {
+            $aErrores["codigo"] = "Tienes que poner 3 codigos diferentes";
         }
-        // Comprobamos que este en mayusculas
-        else if ($aRespuestas["codigo"] !== strtoupper($_REQUEST['codigo'])) {
-            $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
-        }
-        // Comprobamos que no este ya en la base de datos
-        else {
-            // Se utiliza un try/catch por si diera algun error en la conexion o query
-            try {
-                // Iniciamos la conexion con la base de datos
-                $miDB = new PDO(DSN, DBUserName, DBPassword);
-
-                // Hacemos una consulta para ver si ya esta usado el codigo
-                $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
-
-                if ($query->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
-                    $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
+        else if (empty($aErrores["codigo"])) {
+            // Comprobamos que cada codigo esta bien y se puede poner
+            foreach ($aCodigos as $key => $value) {
+                // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
+                if ($error = validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1)) {
+                    $aErrores["codigo"] = $error; // Si da error se lo pasamos a el array de errores
                 }
-            } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
-                $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
+                // Comprobamos que este en mayusculas
+                else if ($aRespuestas["codigo"] !== strtoupper($_REQUEST['codigo'])) {
+                    $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
+                }
+                // Comprobamos que no este ya en la base de datos
+                else {
+                    // Se utiliza un try/catch por si diera algun error en la conexion o query
+                    try {
+                        // Iniciamos la conexion con la base de datos
+                        $miDB = new PDO(DSN, DBUserName, DBPassword);
+
+                        // Hacemos una consulta para ver si ya esta usado el codigo
+                        $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
+
+                        if ($query->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
+                            $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
+                        }
+                    } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
+                        $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
+                    }
+                }
             }
         }
 
@@ -101,7 +119,7 @@
                 <span class="errorCampo"><?= $aErrores['codigo'] ?></span>
             </div>
             <br>
-            
+
             <div>
                 <label class="tituloCampo">Descripcion:</label>
                 <input type="text" name="descripcion" value="<?= $aRespuestas['descripcion'] ?>" obligatorio>
@@ -135,18 +153,34 @@
                 $miDB = new PDO(DSN, DBUserName, DBPassword);
 
                 if ($entradaOK) { // Si no hubieron errores con los datos
-                    // Variable con la sentencia SQL guardado en un string heredoc para tener un formato mas legible
-                    $statement = <<<EOT
-                    INSERT INTO T02_Departamento VALUES(
-                        '{$aRespuestas["codigo"]}',
-                        '{$aRespuestas["descripcion"]}',
-                        NOW(),
-                        {$aRespuestas["volumen"]},
-                        NULL
-                    );
-                    EOT;
-                    // Aqui ejecuta la sentencia SQL
-                    $miDB -> exec($statement);
+                    // Abrimos otro try/catch para en caso de error con la transaccion poder mostrar igualmente la tabla
+                    try {
+                        // Empieza una transaccion
+                        $miDB->beginTransaction();
+
+                        // Insertamos los departamentos
+                        foreach ($aCodigos as $key => $value) {
+                            // Ejecuta la sentencia de insercion
+                            $miDB -> exec(<<<EOT
+                                INSERT INTO T02_Departamento VALUES(
+                                    '{$aCodigos[$key]}',
+                                    '{$aRespuestas["descripcion"]}',
+                                    NOW(),
+                                    {$aRespuestas["volumen"]},
+                                    NULL
+                                );
+                                EOT
+                            );
+                        }
+                        // Si no ha habido ningun error se fijan los cambios en la base de datos
+                        $miDB ->commit();
+                    } catch (PDOException $error) { // Esto se ejecuta si da error algun exec
+                        // Deshacemos los cambios antes de dejarlos fijos
+                        $miDB->rollBack();
+                        echo "<h3 class=\"error\">ERROR EN LA TRANSACCION SQL:</h3>";
+                        echo "<p class=\"error\"><strong>Mensaje:</strong> ".$error->getMessage()."</p>";
+                        echo "<p class=\"error\"><strong>Codigo:</strong> ".$error->getCode()."</p>";
+                    }
                 }
                 
                 // Variable con un query para obtener todos los datos de la tabla
