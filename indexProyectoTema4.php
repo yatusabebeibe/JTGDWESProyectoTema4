@@ -189,8 +189,8 @@
                     <td>5</td>
                     <td>Pagina web que añade tres registros a nuestra tabla Departamento utilizando tres instrucciones insert y una transacción, de tal forma que se añadan los tres registros o no se añada ninguno.</td>
                     <td>
-                        <a href="./codigoPHP/ejercicio05PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio05PDO.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio05PDO.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio05PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio05MySQLi.php" target="_self"><!-- Ejecutar --></a>
