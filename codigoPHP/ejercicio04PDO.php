@@ -101,15 +101,15 @@
                     echo "<thead><tr>";
 
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                    for ($i = 0; $i < $query->columnCount(); $i++) { // $i representa el índice de la columna actual
+                    for ($indice = 0; $indice < $query->columnCount(); $indice++) {
                         // Obtenemos el nombre de la columna y lo ponemos en la tabla html
-                        $nombreColumna = $query->getColumnMeta($i)["name"];
+                        $nombreColumna = $query->getColumnMeta($indice)["name"];
                         echo "<th>{$nombreColumna}</th>";
                     }
                     echo "</tr></thead>";
                     
                     // Obtiene los registros que ha obtenido el query
-                    while ($registro = $query -> fetch(PDO::FETCH_OBJ)) { // Mientras haya mas registros
+                    while ($registro = $query -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
                         foreach ($registro as $value) {

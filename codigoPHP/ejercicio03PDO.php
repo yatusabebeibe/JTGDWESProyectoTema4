@@ -99,7 +99,7 @@
             <div>
                 <label class="tituloCampo">Codigo:</label>
                 <!-- Ponemos los valores del array respuesta para que el usuario no tenga que escribirlo de nuevo en caso de error -->
-                <input type="text" name="codigo" value="<?= $aRespuestas['codigo'] ?>" obligatorio>
+                <input type="text" name="codigo" value="<?= $entradaOK ? "" : $aRespuestas['codigo'] ?>" obligatorio>
                 <!-- Si ha habido un error lo muestra -->
                 <span class="errorCampo"><?= $aErrores['codigo'] ?></span>
             </div>
@@ -107,14 +107,14 @@
             
             <div>
                 <label class="tituloCampo">Descripcion:</label>
-                <input type="text" name="descripcion" value="<?= $aRespuestas['descripcion'] ?>" obligatorio>
+                <input type="text" name="descripcion" value="<?= $entradaOK ? "" : $aRespuestas['descripcion'] ?>" obligatorio>
                 <span class="errorCampo"><?= $aErrores['descripcion'] ?></span>
             </div>
             <br>
 
             <div>
                 <label class="tituloCampo">Fecha Creacion:</label>
-                <!-- Ponemos el valor de la fecha para que aunque no la pueda modificar, el usuario sepa que existe -->
+                <!-- Ponemos los valores del array respuesta para que el usuario no tenga que escribirlo de nuevo en caso de error, y si ya se ha procesado lo eliminamos -->
                 <input type="datetime-local" name="fechaCreacion" value="<?= (new DateTime)->format('Y-m-d\TH:i') ?>" disabled> <!-- El atributo `disabled` hace que no se envie el dato al servidor -->
                 <span class="errorCampo"></span>
             </div>
@@ -122,7 +122,7 @@
 
             <div>
                 <label class="tituloCampo">Volumen:</label>
-                <input type="number" step="0.01" name="volumen" value="<?= $aRespuestas['volumen'] ?>" obligatorio>
+                <input type="number" step="0.01" name="volumen" value="<?= $entradaOK ? "" : $aRespuestas['volumen'] ?>" obligatorio>
                 <span class="errorCampo"><?= $aErrores['volumen'] ?></span>
             </div>
             <br>
@@ -151,31 +151,47 @@
                     // Aqui ejecuta la sentencia SQL
                     $miDB -> exec($statement);
                 }
+
+                // Array con el nombre de las columnas que vamos a seleccionar
+                $aColumnas = [
+                    "Codigo" => "T02_CodDepartamento",
+                    "Descripcion" => "T02_DescDepartamento",
+                    "Volumen" => "T02_VolumenDeNegocio",
+                    "FechaCreacion" => "T02_FechaCreacionDepartamento",
+                    "FechaBaja" => "T02_FechaBajaDepartamento"
+                ];
+
+                $sNomColumnas = implode(",", $aColumnas);
                 
                 // Variable con un query para obtener todos los datos de la tabla
-                $query = $miDB->query("SELECT * FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+                $query = $miDB->query("SELECT {$sNomColumnas} FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
                 
                 // Esto intenta crear una tabla con los resultados del query
                 if ($query -> execute()) { // Si el query se ejecuta correctamente
                     echo "<table>";
-                    
+
 
                     echo "<thead><tr>";
 
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                    for ($i = 0; $i < $query->columnCount(); $i++) { // $i representa el índice de la columna actual
-                        // Obtenemos el nombre de la columna y lo ponemos en la tabla html
-                        $nombreColumna = $query->getColumnMeta($i)["name"];
-                        echo "<th>{$nombreColumna}</th>";
+                    foreach ($aColumnas as $col) {
+                        // Ponemos el nombre de la columna en la tabla html
+                        echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
                     
                     // Obtiene los registros que ha obtenido el query
-                    while ($registro = $query -> fetch(PDO::FETCH_OBJ)) { // Mientras haya mas registros
+                    while ($registro = $query -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
-                        foreach ($registro as $value) {
-                            echo "<td>$value</td>";
+                        foreach ($aColumnas as $col) {
+                            $valor = $registro->$col;
+
+                            if ($col == $aColumnas["Volumen"]) {
+                                $valor = number_format($valor, decimal_separator:",", thousands_separator:".", decimals:2);
+                            }
+
+                            echo "<td>$valor</td>";
                         }
                         echo "</tr>";
                     }

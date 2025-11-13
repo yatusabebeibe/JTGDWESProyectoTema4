@@ -36,6 +36,7 @@
     $entradaOK = true; // Se pone a false si el cliente no se envia datos o si los datos estan mal
     $aErrores = ["codigo"=>'',"descripcion"=>'',"volumen"=>''];
     $aRespuestas = ["codigo"=>null,"descripcion"=>null,"volumen"=>null];
+    $aCodigos = [];
 
     if (!isset($_REQUEST["enviar"])) { // Si hemos cargado la pagina por primera vez
         $entradaOK = false;
@@ -48,29 +49,26 @@
 
         // Dividimos el string por sus comas con el explode() para obtener un array con los codigos
         $aCodigos = explode(",",$aRespuestas["codigo"]);
-        foreach ($aCodigos as $key => $value) {
-            // Le quitamos los espacios de delante y atras
-            $aCodigos[$key] = trim($value);
-        }
-        // Eliminamos lo duplicados
-        $aCodigos = array_unique($aCodigos);
 
         // Validamos todos los datos:
 
         // Comprueba que haya 3 codigos
-        if (count($aCodigos) != 3) {
+        if (count($aCodigos) != 3 || count($aCodigos) != count(array_unique($aCodigos)) ) {
             $aErrores["codigo"] = "Tienes que poner 3 codigos diferentes";
         }
         else if (empty($aErrores["codigo"])) {
             // Comprobamos que cada codigo esta bien y se puede poner
             foreach ($aCodigos as $key => $value) {
                 // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
-                if ($error = validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1)) {
+                if ($error = validacionFormularios::comprobarAlfabetico($aCodigos[$key], 3, 3, 1)) {
                     $aErrores["codigo"] = $error; // Si da error se lo pasamos a el array de errores
                 }
                 // Comprobamos que este en mayusculas
-                else if ($aRespuestas["codigo"] !== strtoupper($_REQUEST['codigo'])) {
+                else if ($aCodigos[$key] !== strtoupper($aCodigos[$key])) {
                     $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
+                }
+                else if ($aCodigos[$key] !== trim($aCodigos[$key])) {
+                    $aErrores["codigo"] = "El codigo no tiene que tener espacios.";
                 }
                 // Comprobamos que no este ya en la base de datos
                 else {
@@ -80,13 +78,15 @@
                         $miDB = new PDO(DSN, DBUserName, DBPassword);
 
                         // Hacemos una consulta para ver si ya esta usado el codigo
-                        $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
+                        $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aCodigos[$key]}'");
 
                         if ($query->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
                             $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
                         }
                     } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
                         $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
+                    } finally {
+                        unset($miDB);
                     }
                 }
             }
@@ -117,7 +117,7 @@
             <div>
                 <label class="tituloCampo">Tres codigos separados por coma (XXX,YYY, ZZZ):</label>
                 <!-- Ponemos los valores del array respuesta para que el usuario no tenga que escribirlo de nuevo en caso de error -->
-                <input type="text" name="codigo" value="<?= $aRespuestas['codigo'] ?>" obligatorio>
+                <input type="text" name="codigo" value="<?= $entradaOK ? "" : $aRespuestas['codigo'] ?>" obligatorio>
                 <!-- Si ha habido un error lo muestra -->
                 <span class="errorCampo"><?= $aErrores['codigo'] ?></span>
             </div>
@@ -125,14 +125,14 @@
 
             <div>
                 <label class="tituloCampo">Descripcion:</label>
-                <input type="text" name="descripcion" value="<?= $aRespuestas['descripcion'] ?>" obligatorio>
+                <input type="text" name="descripcion" value="<?= $entradaOK ? "" : $aRespuestas['descripcion'] ?>" obligatorio>
                 <span class="errorCampo"><?= $aErrores['descripcion'] ?></span>
             </div>
             <br>
 
             <div>
                 <label class="tituloCampo">Fecha Creacion:</label>
-                <!-- Ponemos el valor de la fecha para que aunque no la pueda modificar, el usuario sepa que existe -->
+                <!-- Ponemos los valores del array respuesta para que el usuario no tenga que escribirlo de nuevo en caso de error, y si ya se ha procesado lo eliminamos -->
                 <input type="datetime-local" name="fechaCreacion" value="<?= (new DateTime)->format('Y-m-d\TH:i') ?>" disabled> <!-- El atributo `disabled` hace que no se envie el dato al servidor -->
                 <span class="errorCampo"></span>
             </div>
@@ -140,7 +140,7 @@
 
             <div>
                 <label class="tituloCampo">Volumen:</label>
-                <input type="number" step="0.01" name="volumen" value="<?= $aRespuestas['volumen'] ?>" obligatorio>
+                <input type="number" step="0.01" name="volumen" value="<?= $entradaOK ? "" : $aRespuestas['volumen'] ?>" obligatorio>
                 <span class="errorCampo"><?= $aErrores['volumen'] ?></span>
             </div>
             <br>
@@ -160,21 +160,24 @@
                     try {
                         // Empieza una transaccion
                         $miDB->beginTransaction();
-
+                        
                         // Insertamos los departamentos
                         foreach ($aCodigos as $key => $value) {
-                            // Ejecuta la sentencia de insercion
-                            $miDB -> exec(<<<EOT
-                                INSERT INTO T02_Departamento VALUES(
-                                    '{$aCodigos[$key]}',
-                                    '{$aRespuestas["descripcion"]}',
-                                    NOW(),
-                                    {$aRespuestas["volumen"]},
-                                    NULL
-                                );
-                                EOT
+                            // Variable con la sentencia SQL guardado en un string heredoc para tener un formato mas legible
+                            $statement = <<<EOT
+                            INSERT INTO T02_Departamento VALUES(
+                                '{$aCodigos[$key]}',
+                                '{$aRespuestas["descripcion"]}',
+                                NOW(),
+                                {$aRespuestas["volumen"]},
+                                NULL
                             );
+                            EOT;
+                            
+                            // Ejecuta la sentencia de insercion
+                            $miDB -> exec($statement);
                         }
+
                         // Si no ha habido ningun error se fijan los cambios en la base de datos
                         $miDB ->commit();
                     } catch (PDOException $error) { // Esto se ejecuta si da error algun exec
@@ -197,15 +200,15 @@
                     echo "<thead><tr>";
 
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                    for ($i = 0; $i < $query->columnCount(); $i++) { // $i representa el índice de la columna actual
+                    for ($indice = 0; $indice < $query->columnCount(); $indice++) {
                         // Obtenemos el nombre de la columna y lo ponemos en la tabla html
-                        $nombreColumna = $query->getColumnMeta($i)["name"];
+                        $nombreColumna = $query->getColumnMeta($indice)["name"];
                         echo "<th>{$nombreColumna}</th>";
                     }
                     echo "</tr></thead>";
                     
                     // Obtiene los registros que ha obtenido el query
-                    while ($registro = $query -> fetch(PDO::FETCH_OBJ)) { // Mientras haya mas registros
+                    while ($registro = $query -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
                         foreach ($registro as $value) {
@@ -225,6 +228,8 @@
                 echo '<h3 class="error">ERROR SQL:</h3>';
                 echo '<p class="error"><strong>Mensaje:</strong> '.$error->getMessage()."</p>";
                 echo '<p class="error"><strong>Codigo:</strong> '.$error->getCode()."</p>";
+            } finally {
+                unset($miDB);
             }
             echo "</div>";
         ?>
