@@ -21,7 +21,7 @@
     $config = parse_ini_file("../config/DB.ini");
 
     /*  Constantes para la connexion con la DB.
-        Se pueden usar tanto `const` como `define()` en la mayoria de casos.
+        Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
