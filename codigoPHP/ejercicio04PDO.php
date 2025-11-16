@@ -79,26 +79,6 @@
                 // lo inicializo a null para que al hacerlo luego en el if no de error por no estar definido si no pasa el proximo if
                 $parametros = null;
 
-                if ($entradaOK && !empty($aRespuestas["descripcion"])) { // Si no hubieron errores con los datos
-                    // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
-                    $statement = <<<EOF
-                    SELECT * FROM T02_Departamento
-                    WHERE T02_DescDepartamento LIKE :descripcion
-                    ORDER BY T02_FechaCreacionDepartamento DESC;
-                    EOF;
-
-                    $consulta = $miDB->prepare($statement);
-
-                    $parametros = [
-                        // Agrego los % para el LIKE
-                        ":descripcion" => "%" . $aRespuestas["descripcion"] . "%"
-                    ];
-                    
-                } else {
-                    // Variable con un query para obtener todos los datos de la tabla
-                    $consulta = $miDB->query("SELECT * FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
-                }
-                
                 // Array con el nombre de las columnas que vamos a seleccionar
                 $aColumnas = [
                     "Codigo" => "T02_CodDepartamento",
@@ -108,11 +88,27 @@
                     "FechaBaja" => "T02_FechaBajaDepartamento"
                 ];
 
-                // Preparamos la consulta
-                $consulta = $miDB->prepare("SELECT ".implode(",", $aColumnas)." FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+                // String de las columnas que vamos a seleccionar
+                $sColumnas = implode(",", $aColumnas);
 
-                // Creamos un array con los parametros y los valores con los que se va a ejecutar
-                $parametros = null;
+                if ($entradaOK && !empty($aRespuestas["descripcion"])) { // Si no hubieron errores con los datos
+                    // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
+                    $statement = <<<EOF
+                    SELECT $sColumnas FROM T02_Departamento
+                    WHERE T02_DescDepartamento LIKE :descripcion
+                    ORDER BY {$aColumnas['FechaCreacion']} DESC;
+                    EOF;
+
+                    $consulta = $miDB->prepare($statement);
+
+                    $parametros = [
+                        ":descripcion" => "%".$aRespuestas["descripcion"]."%"
+                    ];
+                    
+                } else {
+                    // Variable con un query para obtener todos los datos de la tabla
+                    $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY {$aColumnas['FechaCreacion']} DESC");
+                }
                 
                 // Esto intenta crear una tabla con los resultados del query
                 if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
