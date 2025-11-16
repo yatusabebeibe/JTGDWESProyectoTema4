@@ -17,19 +17,15 @@
     
     include_once("../core/231018libreriaValidacion.php");
 
-    // Variable para obtener datos de la configuracion de la DB
-    $config = parse_ini_file("../config/DB.ini");
+    // Importamos la configuracion de la DB
+    require_once("../config/confDBPDO.php");
 
     /*  Constantes para la connexion con la DB.
         Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    define("HOST", $config["db_host"]);
-    define("DBName", $config["db_name_t4"]);
-    define("DBUserName", $config["db_user_t4"]);
-    define("DBPassword", $config["db_pass_t4"]);
-    const DSN = "mysql:host=".HOST.";dbname=".DBName;
+    const DSN = "mysql:host=".DBHost.";dbname=".DBName;
 
 
     // Variables generales para gestionar los datos del formulario
@@ -78,31 +74,11 @@
             echo '<div class="resultado">';
             try {
                 // Iniciamos la conexion con la base de datos
-                $miDB = new PDO(DSN, DBUserName, DBPassword);
+                $miDB = new PDO(DSN, DBUser, DBPass);
 
                 // lo inicializo a null para que al hacerlo luego en el if no de error por no estar definido si no pasa el proximo if
                 $parametros = null;
 
-                if ($entradaOK && !empty($aRespuestas["descripcion"])) { // Si no hubieron errores con los datos
-                    // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
-                    $statement = <<<EOF
-                    SELECT * FROM T02_Departamento
-                    WHERE T02_DescDepartamento LIKE :descripcion
-                    ORDER BY T02_FechaCreacionDepartamento DESC;
-                    EOF;
-
-                    $consulta = $miDB->prepare($statement);
-
-                    $parametros = [
-                        // Agrego los % para el LIKE
-                        ":descripcion" => "%" . $aRespuestas["descripcion"] . "%"
-                    ];
-                    
-                } else {
-                    // Variable con un query para obtener todos los datos de la tabla
-                    $consulta = $miDB->query("SELECT * FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
-                }
-                
                 // Array con el nombre de las columnas que vamos a seleccionar
                 $aColumnas = [
                     "Codigo" => "T02_CodDepartamento",
@@ -112,11 +88,27 @@
                     "FechaBaja" => "T02_FechaBajaDepartamento"
                 ];
 
-                // Preparamos la consulta
-                $consulta = $miDB->prepare("SELECT ".implode(",", $aColumnas)." FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+                // String de las columnas que vamos a seleccionar
+                $sColumnas = implode(",", $aColumnas);
 
-                // Creamos un array con los parametros y los valores con los que se va a ejecutar
-                $parametros = null;
+                if ($entradaOK && !empty($aRespuestas["descripcion"])) { // Si no hubieron errores con los datos
+                    // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
+                    $statement = <<<EOF
+                    SELECT $sColumnas FROM T02_Departamento
+                    WHERE T02_DescDepartamento LIKE :descripcion
+                    ORDER BY {$aColumnas['FechaCreacion']} DESC;
+                    EOF;
+
+                    $consulta = $miDB->prepare($statement);
+
+                    $parametros = [
+                        ":descripcion" => "%".$aRespuestas["descripcion"]."%"
+                    ];
+                    
+                } else {
+                    // Variable con un query para obtener todos los datos de la tabla
+                    $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY {$aColumnas['FechaCreacion']} DESC");
+                }
                 
                 // Esto intenta crear una tabla con los resultados del query
                 if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
