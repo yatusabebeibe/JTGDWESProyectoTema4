@@ -111,6 +111,37 @@
         tr > td > a {line-height: 14px;}
         table > * > tr > *  {text-align: center;}
         table > * > tr > *:nth-child(2)  {text-align: left;}
+
+        form {
+            text-align: center;
+            margin-bottom: 5px;
+            & > table#sql {
+                margin: 0 auto;
+                max-width: 500px;
+
+                & tr > * {text-align: center;}
+                & a {display: block;}
+                & input[type="submit"] {
+                    background: none;
+                    border: none;
+
+                    display: block;
+                    text-align: center;
+                    width: 100%;
+
+                    cursor: pointer;
+                    
+                    font-size: 16px;
+                    line-height: 14px;
+                    text-decoration: none;
+                    font-family: Arial, sans-serif;
+                    color: #0077cc;
+                }
+                & input[type="submit"]:hover {
+                    color: #005fa3;
+                }
+            }
+        }
     </style>
 </head>
 <body>
@@ -122,11 +153,50 @@
     </header>
     <!-- 😼 -->
     <main>
-        <ul>
-            <li><a target="_blank" href="./mostrarcodigo/borrarDB.php">Borrado</a></li>
-            <li><a target="_blank" href="./mostrarcodigo/crearDB.php">Creacion</a></li>
-            <li><a target="_blank" href="./mostrarcodigo/cargaInicialDB.php">Carga Inicial</a></li>
-        </ul>
+        <form action="." method="get">
+            <table id="sql">
+                <thead>
+                    <tr>
+                        <th>Ver código</th>
+                        <th>Ejecutar SQL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a target="_self" href="./mostrarcodigo/borrarDB.php">Borrado</a></td>
+                        <td><input type="submit" value="Ejecutar" name="borrar"></td>
+                    </tr>
+                    <tr>
+                        <td><a target="_self" href="./mostrarcodigo/crearDB.php">Creacion</a></td>
+                        <td><input type="submit" value="Ejecutar" name="crear"></td>
+                    </tr>
+                    <tr>
+                        <td><a target="_self" href="./mostrarcodigo/cargaInicialDB.php">Carga Inicial</a></td>
+                        <td><input type="submit" value="Ejecutar" name="cargar"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="Ejecutar todos" name="todos"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <?php
+            echo "&#8203";
+            if (isset($_REQUEST["borrar"])) {
+                include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
+            }
+            if (isset($_REQUEST["crear"])) {
+                include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
+            }
+            if (isset($_REQUEST["cargar"])) {
+                include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+            }
+            if (isset($_REQUEST["todos"])) {
+                include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
+                include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
+                include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+            }
+            ?>
+        </form>
         <table>
             <thead>
                 <tr>
@@ -240,5 +310,10 @@
     <footer><a href="../../" target="_self">Jesús Temprano Gallego</a> | 30/10/2025</footer>
     <!-- 😼 -->
     <!-- muxixima glasia alvelto pol el marivilliosiximo achetemeele que te paxo chatgepete -->
+     <script>
+        if (window.location.search) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 </body>
 </html>
