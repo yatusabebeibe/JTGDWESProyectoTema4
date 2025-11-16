@@ -17,19 +17,15 @@
     
     include_once("../core/231018libreriaValidacion.php");
 
-    // Variable para obtener datos de la configuracion de la DB
-    $config = parse_ini_file("../config/DB.ini");
+    // Importamos la configuracion de la DB
+    require_once("../config/confDBPDO.php");
 
     /*  Constantes para la connexion con la DB.
         Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    define("HOST", $config["db_host"]);
-    define("DBName", $config["db_name_t4"]);
-    define("DBUserName", $config["db_user_t4"]);
-    define("DBPassword", $config["db_pass_t4"]);
-    const DSN = "mysql:host=".HOST.";dbname=".DBName;
+    const DSN = "mysql:host=".DBHost.";dbname=".DBName;
 
 
     // Variables generales para gestionar los datos del formulario
@@ -60,7 +56,7 @@
             // Se utiliza un try/catch por si diera algun error en la conexion o query
             try {
                 // Iniciamos la conexion con la base de datos
-                $miDB = new PDO(DSN, DBUserName, DBPassword);
+                $miDB = new PDO(DSN, DBUser, DBPass);
 
                 // Preparamos la consulta con el parametro `:departamento`
                 $consulta = $miDB->prepare("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = :departamento");
@@ -160,7 +156,7 @@
             echo '<div class="resultado">';
             try {
                 // Iniciamos la conexion con la base de datos
-                $miDB = new PDO(DSN, DBUserName, DBPassword);
+                $miDB = new PDO(DSN, DBUser, DBPass);
 
                 if ($entradaOK) { // Si no hubieron errores con los datos
                     // Abrimos otro try/catch para en caso de error con la transaccion poder mostrar igualmente la tabla

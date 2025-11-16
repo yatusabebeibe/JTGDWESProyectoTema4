@@ -6,18 +6,18 @@
  *  archivo y podría no funcionar.
  *  IMPORTANTE: poner '/' al principio del string con la ruta.
  */ 
-$config = parse_ini_file(dirname(__FILE__) . "/../config/DB.ini");
+require_once(dirname(__FILE__) . "/../config/confDBPDO.php");
+
+const DSN = "mysql:host=".DBHost;
 
 if ($config) { // Comprueba que la configuración a sido cargada correctamente
     try {
         // Iniciamos la conexión
-        $conexionPDO = new PDO(
-            "mysql:host={$config['db_host']};dbname={$config['db_name_t4']}",
-            $config["db_user_root"],
-            $config["db_pass_root"]
-        );
+        $conexionPDO = new PDO(DSN, DBUser, DBPass);
 
-        $query = $conexionPDO->query("SELECT * FROM T02_Departamento");
+        $query = $conexionPDO->prepare("SELECT * FROM T02_Departamento");
+
+        $query->execute(null);
 
         if ($query->rowCount() == 0) {
             /** Cargamos el archivo SQL que queremos ejecutar.
@@ -28,8 +28,10 @@ if ($config) { // Comprueba que la configuración a sido cargada correctamente
              */ 
             $sql = file_get_contents(dirname(__FILE__) . "/../scriptDB/CargaInicialDBJTGDWESProyectoTema4.sql");
 
+            $consulta = $conexionPDO->prepare($sql);
+
             // Ejecutamos el script SQL del archivo
-            $conexionPDO->exec($sql);
+            $consulta->execute(null);
 
             // Mensaje de funcionamiento correcto
             echo "Carga inicial correcta. ";

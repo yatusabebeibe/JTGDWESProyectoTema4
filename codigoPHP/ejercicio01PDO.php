@@ -6,19 +6,15 @@
 
     echo "<h1>Conexión a la base de datos.</h1>";
 
-    // Variable para obtener datos de la configuracion de la DB
-    $config = parse_ini_file("../config/DB.ini");
+    // Importamos la configuracion de la DB
+    require_once("../config/confDBPDO.php");
 
     /*  Constantes para la connexion con la DB.
         Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    define("HOST", $config["db_host"]);
-    define("DBName", $config["db_name_t4"]);
-    define("DBUserName", $config["db_user_t4"]);
-    define("DBPassword", $config["db_pass_t4"]);
-    const DSN = "mysql:host=".HOST.";dbname=".DBName;
+    const DSN = "mysql:host=".DBHost.";dbname=".DBName;
 
     // Lista con los atributos que vamos a consultar.
     $atributos = array(
@@ -43,7 +39,7 @@
     echo "<h2>Ejemplo Error:</h2>";
     try {
         // Hacemos la conexion a la base de datos
-        $miDB = new PDO(DSN, DBUserName, "Contraseña Incorrecta");
+        $miDB = new PDO(DSN, DBUser, "Contraseña Incorrecta");
 
     } catch (PDOException $error) { // Si la connexion tira un error `PDOException` ejecuta este codigo:
         
@@ -60,7 +56,7 @@
     // Demostración de conexión con credenciales correctas.
     echo "<h2>Ejemplo Bien:</h2>";
     try {
-        $miDB = new PDO(DSN, DBUserName, DBPassword);
+        $miDB = new PDO(DSN, DBUser, DBPass);
         
         // Recorremos la lista de atributos y consultamos su valor.
         foreach ($atributos as $atributo) {
