@@ -16,5 +16,3 @@ const DBPassRoot = "paso";
 const DBName = "DBJTGDWESProyectoTema4";
 const DBUser = "userJTGDWESProyectoTema4";
 const DBPass = "paso";
-
-echo "importado correctamente";
