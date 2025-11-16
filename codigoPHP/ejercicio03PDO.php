@@ -64,9 +64,16 @@
                 $miDB = new PDO(DSN, DBUserName, DBPassword);
 
                 // Hacemos una consulta para ver si ya esta usado el codigo
-                $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
+                $consulta = $miDB->prepare("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = :codigoDep");
 
-                if ($query->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
+                // Creamos un array con los parametros y los valores que deverian llevar
+                $parametros = [
+                    ":codigoDep" => $aRespuestas["codigo"]
+                ];
+                // Hacemos una consulta para ver si ya esta usado el codigo
+                $consulta->execute($parametros);
+
+                if ($consulta->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
                     $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
                 }
             } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
@@ -141,17 +148,28 @@
                     // Variable con la sentencia SQL guardado en un string heredoc para tener un formato mas legible
                     $statement = <<<EOT
                     INSERT INTO T02_Departamento VALUES(
-                        '{$aRespuestas["codigo"]}',
-                        '{$aRespuestas["descripcion"]}',
+                        :codigo,
+                        :descripcion,
                         NOW(),
-                        {$aRespuestas["volumen"]},
+                        :volumen,
                         NULL
                     );
                     EOT;
-                    // Aqui ejecuta la sentencia SQL
-                    $miDB -> exec($statement);
-                }
 
+                    // Preparamos la consulta
+                    $consulta = $miDB->prepare($statement);
+
+                    // Creamos un array con los parametros y los valores con los que se va a ejecutar
+                    $parametros = [
+                        ":codigo" => $aRespuestas["codigo"],
+                        ":descripcion" => $aRespuestas["descripcion"],
+                        ":volumen" => $aRespuestas["volumen"]
+                    ];
+
+                    // Aqui ejecuta la sentencia SQL
+                    $consulta->execute($parametros);
+                }
+                
                 // Array con el nombre de las columnas que vamos a seleccionar
                 $aColumnas = [
                     "Codigo" => "T02_CodDepartamento",
@@ -161,15 +179,16 @@
                     "FechaBaja" => "T02_FechaBajaDepartamento"
                 ];
 
-                $sNomColumnas = implode(",", $aColumnas);
-                
-                // Variable con un query para obtener todos los datos de la tabla
-                $query = $miDB->query("SELECT {$sNomColumnas} FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+                // Preparamos la consulta
+                $consulta = $miDB->prepare("SELECT ".implode(",", $aColumnas)." FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+
+                // Creamos un array con los parametros y los valores con los que se va a ejecutar
+                $parametros = null;
                 
                 // Esto intenta crear una tabla con los resultados del query
-                if ($query -> execute()) { // Si el query se ejecuta correctamente
+                if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
                     echo "<table>";
-
+                    
 
                     echo "<thead><tr>";
 
@@ -181,7 +200,7 @@
                     echo "</tr></thead>";
                     
                     // Obtiene los registros que ha obtenido el query
-                    while ($registro = $query -> fetchObject()) { // Mientras haya mas registros
+                    while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
                         foreach ($aColumnas as $col) {
@@ -198,7 +217,7 @@
                     echo "</table>";
 
                     // Mostramos cuantos registros tenia la tabla
-                    echo "<p>Habia {$query->rowCount()} registros.</p>";
+                    echo "<p>Habia {$consulta->rowCount()} registros.</p>";
                 }
                 else { // Ssi da error al hacer el query
                     echo "No se pudo ejecutar la consulta";

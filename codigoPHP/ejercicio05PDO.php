@@ -57,38 +57,46 @@
             $aErrores["codigo"] = "Tienes que poner 3 codigos diferentes";
         }
         else if (empty($aErrores["codigo"])) {
-            // Comprobamos que cada codigo esta bien y se puede poner
-            foreach ($aCodigos as $key => $value) {
-                // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
-                if ($error = validacionFormularios::comprobarAlfabetico($aCodigos[$key], 3, 3, 1)) {
-                    $aErrores["codigo"] = $error; // Si da error se lo pasamos a el array de errores
-                }
-                // Comprobamos que este en mayusculas
-                else if ($aCodigos[$key] !== strtoupper($aCodigos[$key])) {
-                    $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
-                }
-                else if ($aCodigos[$key] !== trim($aCodigos[$key])) {
-                    $aErrores["codigo"] = "El codigo no tiene que tener espacios.";
-                }
-                // Comprobamos que no este ya en la base de datos
-                else {
-                    // Se utiliza un try/catch por si diera algun error en la conexion o query
-                    try {
-                        // Iniciamos la conexion con la base de datos
-                        $miDB = new PDO(DSN, DBUserName, DBPassword);
+            // Se utiliza un try/catch por si diera algun error en la conexion o query
+            try {
+                // Iniciamos la conexion con la base de datos
+                $miDB = new PDO(DSN, DBUserName, DBPassword);
+
+                // Preparamos la consulta con el parametro `:codigoDep`
+                $consulta = $miDB->prepare("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = :codigoDep");
+
+                // Comprobamos que cada codigo esta bien y se puede poner
+                foreach ($aCodigos as $key => $value) {
+                    // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
+                    if ($error = validacionFormularios::comprobarAlfabetico($aCodigos[$key], 3, 3, 1)) {
+                        $aErrores["codigo"] = $error; // Si da error se lo pasamos a el array de errores
+                    }
+                    // Comprobamos que este en mayusculas
+                    else if ($aCodigos[$key] !== strtoupper($aCodigos[$key])) {
+                        $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
+                    }
+                    else if ($aCodigos[$key] !== trim($aCodigos[$key])) {
+                        $aErrores["codigo"] = "El codigo no tiene que tener espacios.";
+                    }
+                    // Comprobamos que no este ya en la base de datos
+                    else {
+                        // Creamos un array con los parametros y los valores que deverian llevar
+                        $parametros = [
+                            ":codigoDep" => $aCodigos[$key]
+                        ];
 
                         // Hacemos una consulta para ver si ya esta usado el codigo
-                        $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aCodigos[$key]}'");
+                        $consulta->execute($parametros);
 
-                        if ($query->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
+                        if ($consulta->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
                             $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
                         }
-                    } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
-                        $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
-                    } finally {
-                        unset($miDB);
                     }
                 }
+            } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
+                $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
+            } finally {
+                unset($miDB);
             }
         }
 
@@ -158,24 +166,34 @@
                 if ($entradaOK) { // Si no hubieron errores con los datos
                     // Abrimos otro try/catch para en caso de error con la transaccion poder mostrar igualmente la tabla
                     try {
+                        // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
+                        $statement = <<<EOT
+                        INSERT INTO T02_Departamento VALUES(
+                            :codigo,
+                            :descripcion,
+                            NOW(),
+                            :volumen,
+                            NULL
+                        );
+                        EOT;
+
+                        // Preparamos una sentencia
+                        $consulta = $miDB->prepare($statement);
+
                         // Empieza una transaccion
                         $miDB->beginTransaction();
                         
                         // Insertamos los departamentos
                         foreach ($aCodigos as $key => $value) {
-                            // Variable con la sentencia SQL guardado en un string heredoc para tener un formato mas legible
-                            $statement = <<<EOT
-                            INSERT INTO T02_Departamento VALUES(
-                                '{$aCodigos[$key]}',
-                                '{$aRespuestas["descripcion"]}',
-                                NOW(),
-                                {$aRespuestas["volumen"]},
-                                NULL
-                            );
-                            EOT;
+                            // Creamos un array con los parametros y los valores que deverian llevar
+                            $parametros = [
+                                ":codigo" => $aCodigos[$key],
+                                ":descripcion" => $aRespuestas["descripcion"],
+                                ":volumen" => $aRespuestas["volumen"]
+                            ];
                             
-                            // Ejecuta la sentencia de insercion
-                            $miDB -> exec($statement);
+                            // Ejecuta la sentencia de insercion insertandole los parametros creados antes
+                            $consulta->execute($parametros);
                         }
 
                         // Si no ha habido ningun error se fijan los cambios en la base de datos
@@ -188,38 +206,55 @@
                         echo "<p class=\"error\"><strong>Codigo:</strong> ".$error->getCode()."</p>";
                     }
                 }
-                
-                // Variable con un query para obtener todos los datos de la tabla
-                $query = $miDB->query("SELECT * FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+
+                // Array con el nombre de las columnas que vamos a seleccionar
+                $aColumnas = [
+                    "Codigo" => "T02_CodDepartamento",
+                    "Descripcion" => "T02_DescDepartamento",
+                    "Volumen" => "T02_VolumenDeNegocio",
+                    "FechaCreacion" => "T02_FechaCreacionDepartamento",
+                    "FechaBaja" => "T02_FechaBajaDepartamento"
+                ];
+
+                // Preparamos la consulta
+                $consulta = $miDB->prepare("SELECT ".implode(",", $aColumnas)." FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+
+                // Creamos un array con los parametros y los valores con los que se va a ejecutar
+                $parametros = null;
                 
                 // Esto intenta crear una tabla con los resultados del query
-                if ($query -> execute()) { // Si el query se ejecuta correctamente
+                if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
                     echo "<table>";
                     
 
                     echo "<thead><tr>";
 
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                    for ($indice = 0; $indice < $query->columnCount(); $indice++) {
-                        // Obtenemos el nombre de la columna y lo ponemos en la tabla html
-                        $nombreColumna = $query->getColumnMeta($indice)["name"];
-                        echo "<th>{$nombreColumna}</th>";
+                    foreach ($aColumnas as $col) {
+                        // Ponemos el nombre de la columna en la tabla html
+                        echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
                     
                     // Obtiene los registros que ha obtenido el query
-                    while ($registro = $query -> fetchObject()) { // Mientras haya mas registros
+                    while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
-                        foreach ($registro as $value) {
-                            echo "<td>$value</td>";
+                        foreach ($aColumnas as $col) {
+                            $valor = $registro->$col;
+
+                            if ($col == $aColumnas["Volumen"]) {
+                                $valor = number_format($valor, decimal_separator:",", thousands_separator:".", decimals:2);
+                            }
+
+                            echo "<td>$valor</td>";
                         }
                         echo "</tr>";
                     }
                     echo "</table>";
 
                     // Mostramos cuantos registros tenia la tabla
-                    echo "<p>Habia {$query->rowCount()} registros.</p>";
+                    echo "<p>Habia {$consulta->rowCount()} registros.</p>";
                 }
                 else { // Ssi da error al hacer el query
                     echo "No se pudo ejecutar la consulta";
