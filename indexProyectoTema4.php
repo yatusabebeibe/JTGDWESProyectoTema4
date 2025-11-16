@@ -181,19 +181,24 @@
             </table>
             <?php
             echo "&#8203";
-            if (isset($_REQUEST["borrar"])) {
-                include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
-            }
-            if (isset($_REQUEST["crear"])) {
-                include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
-            }
-            if (isset($_REQUEST["cargar"])) {
-                include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
-            }
-            if (isset($_REQUEST["todos"])) {
-                include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
-                include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
-                include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+            // Comprobar si estamos en la URL de explotación
+            if ($_SERVER['HTTP_HOST'] === 'jesustemgal.ieslossauces.es') {
+                echo "<p>No se puede ejecutar desde explotación.</p>";
+            } else {
+                if (isset($_REQUEST["borrar"])) {
+                    include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
+                }
+                if (isset($_REQUEST["crear"])) {
+                    include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
+                }
+                if (isset($_REQUEST["cargar"])) {
+                    include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+                }
+                if (isset($_REQUEST["todos"])) {
+                    include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
+                    include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
+                    include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+                }
             }
             ?>
         </form>
