@@ -271,8 +271,8 @@
                     <td>6</td>
                     <td>Pagina web que cargue registros en la tabla Departamento desde un array departamentosnuevos utilizando una consulta preparada. <i>(Después de programar y entender este ejercicio, modificar los ejercicios anteriores para que utilicen consultas preparadas). Probar consultas preparadas sin bind, pasando los parámetros en un array a execute.</i></td>
                     <td>
-                        <a href="./codigoPHP/ejercicio06PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio06PDO.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio06PDO.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio06PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio06MySQLi.php" target="_self"><!-- Ejecutar --></a>
