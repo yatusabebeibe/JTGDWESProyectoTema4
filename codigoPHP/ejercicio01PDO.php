@@ -6,16 +6,19 @@
 
     echo "<h1>Conexión a la base de datos.</h1>";
 
+    // Variable para obtener datos de la configuracion de la DB
+    $config = parse_ini_file("../config/DB.ini");
+
     /*  Constantes para la connexion con la DB.
-        Se pueden usar tanto `const` como `define()` en la mayoria de casos.
+        Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    const HOST = "10.199.10.22";
-    const DBName = "DBJTGDWESProyectoTema4";
+    define("HOST", $config["db_host"]);
+    define("DBName", $config["db_name_t4"]);
+    define("DBUserName", $config["db_user_t4"]);
+    define("DBPassword", $config["db_pass_t4"]);
     const DSN = "mysql:host=".HOST.";dbname=".DBName;
-    const DBUserName = "userJTGDWESProyectoTema4";
-    const DBPassword = "paso";
 
     // Lista con los atributos que vamos a consultar.
     $atributos = array(

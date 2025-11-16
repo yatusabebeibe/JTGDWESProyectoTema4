@@ -17,22 +17,26 @@
     
     include_once("../core/231018libreriaValidacion.php");
 
+    // Variable para obtener datos de la configuracion de la DB
+    $config = parse_ini_file("../config/DB.ini");
+
     /*  Constantes para la connexion con la DB.
-        Se pueden usar tanto `const` como `define()` en la mayoria de casos.
+        Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    const HOST = "10.199.10.22";
-    const DBName = "DBJTGDWESProyectoTema4";
+    define("HOST", $config["db_host"]);
+    define("DBName", $config["db_name_t4"]);
+    define("DBUserName", $config["db_user_t4"]);
+    define("DBPassword", $config["db_pass_t4"]);
     const DSN = "mysql:host=".HOST.";dbname=".DBName;
-    const DBUserName = "userJTGDWESProyectoTema4";
-    const DBPassword = "paso";
 
 
     // Variables generales para gestionar los datos del formulario
     $entradaOK = true; // Se pone a false si el cliente no se envia datos o si los datos estan mal
     $aErrores = ["codigo"=>'',"descripcion"=>'',"volumen"=>''];
     $aRespuestas = ["codigo"=>null,"descripcion"=>null,"volumen"=>null];
+    $aCodigos = [];
 
     if (!isset($_REQUEST["enviar"])) { // Si hemos cargado la pagina por primera vez
         $entradaOK = false;
@@ -45,47 +49,54 @@
 
         // Dividimos el string por sus comas con el explode() para obtener un array con los codigos
         $aCodigos = explode(",",$aRespuestas["codigo"]);
-        foreach ($aCodigos as $key => $value) {
-            // Le quitamos los espacios de delante y atras
-            $aCodigos[$key] = trim($value);
-        }
-        // Eliminamos lo duplicados
-        $aCodigos = array_unique($aCodigos);
 
         // Validamos todos los datos:
 
         // Comprueba que haya 3 codigos
-        if (count($aCodigos) != 3) {
+        if (count($aCodigos) != 3 || count($aCodigos) != count(array_unique($aCodigos)) ) {
             $aErrores["codigo"] = "Tienes que poner 3 codigos diferentes";
         }
         else if (empty($aErrores["codigo"])) {
-            // Comprobamos que cada codigo esta bien y se puede poner
-            foreach ($aCodigos as $key => $value) {
-                // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
-                if ($error = validacionFormularios::comprobarAlfabetico($aRespuestas["codigo"], 3, 3, 1)) {
-                    $aErrores["codigo"] = $error; // Si da error se lo pasamos a el array de errores
-                }
-                // Comprobamos que este en mayusculas
-                else if ($aRespuestas["codigo"] !== strtoupper($_REQUEST['codigo'])) {
-                    $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
-                }
-                // Comprobamos que no este ya en la base de datos
-                else {
-                    // Se utiliza un try/catch por si diera algun error en la conexion o query
-                    try {
-                        // Iniciamos la conexion con la base de datos
-                        $miDB = new PDO(DSN, DBUserName, DBPassword);
+            // Se utiliza un try/catch por si diera algun error en la conexion o query
+            try {
+                // Iniciamos la conexion con la base de datos
+                $miDB = new PDO(DSN, DBUserName, DBPassword);
+
+                // Preparamos la consulta con el parametro `:codigoDep`
+                $consulta = $miDB->prepare("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = :codigoDep");
+
+                // Comprobamos que cada codigo esta bien y se puede poner
+                foreach ($aCodigos as $key => $value) {
+                    // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
+                    if ($error = validacionFormularios::comprobarAlfabetico($aCodigos[$key], 3, 3, 1)) {
+                        $aErrores["codigo"] = $error; // Si da error se lo pasamos a el array de errores
+                    }
+                    // Comprobamos que este en mayusculas
+                    else if ($aCodigos[$key] !== strtoupper($aCodigos[$key])) {
+                        $aErrores["codigo"] = "El codigo tiene estar en mayusculas.";
+                    }
+                    else if ($aCodigos[$key] !== trim($aCodigos[$key])) {
+                        $aErrores["codigo"] = "El codigo no tiene que tener espacios.";
+                    }
+                    // Comprobamos que no este ya en la base de datos
+                    else {
+                        // Creamos un array con los parametros y los valores que deverian llevar
+                        $parametros = [
+                            ":codigoDep" => $aCodigos[$key]
+                        ];
 
                         // Hacemos una consulta para ver si ya esta usado el codigo
-                        $query = $miDB->query("SELECT * FROM T02_Departamento WHERE T02_CodDepartamento = '{$aRespuestas["codigo"]}'");
+                        $consulta->execute($parametros);
 
-                        if ($query->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
+                        if ($consulta->rowCount() >= 1) { // Si devuelve algo, es que el codigo ya esta usado
                             $aErrores["codigo"] = "El codigo ya esta siendo usado por otro departamento.";
                         }
-                    } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
-                        $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
                     }
                 }
+            } catch (PDOException $error) { // Esto se ejecuta si da error al crear la conexion o hacer la consulta
+                $aErrores["codigo"] = "Error de conexion: " . $error->getMessage();
+            } finally {
+                unset($miDB);
             }
         }
 
@@ -112,9 +123,9 @@
     <form method="post">
         <div id="campos">
             <div>
-                <label class="tituloCampo">Codigo:</label>
+                <label class="tituloCampo">Tres codigos separados por coma (XXX,YYY,ZZZ):</label>
                 <!-- Ponemos los valores del array respuesta para que el usuario no tenga que escribirlo de nuevo en caso de error -->
-                <input type="text" name="codigo" value="<?= $aRespuestas['codigo'] ?>" obligatorio>
+                <input type="text" name="codigo" value="<?= $entradaOK ? "" : $aRespuestas['codigo'] ?>" obligatorio>
                 <!-- Si ha habido un error lo muestra -->
                 <span class="errorCampo"><?= $aErrores['codigo'] ?></span>
             </div>
@@ -122,14 +133,14 @@
 
             <div>
                 <label class="tituloCampo">Descripcion:</label>
-                <input type="text" name="descripcion" value="<?= $aRespuestas['descripcion'] ?>" obligatorio>
+                <input type="text" name="descripcion" value="<?= $entradaOK ? "" : $aRespuestas['descripcion'] ?>" obligatorio>
                 <span class="errorCampo"><?= $aErrores['descripcion'] ?></span>
             </div>
             <br>
 
             <div>
                 <label class="tituloCampo">Fecha Creacion:</label>
-                <!-- Ponemos el valor de la fecha para que aunque no la pueda modificar, el usuario sepa que existe -->
+                <!-- Ponemos los valores del array respuesta para que el usuario no tenga que escribirlo de nuevo en caso de error, y si ya se ha procesado lo eliminamos -->
                 <input type="datetime-local" name="fechaCreacion" value="<?= (new DateTime)->format('Y-m-d\TH:i') ?>" disabled> <!-- El atributo `disabled` hace que no se envie el dato al servidor -->
                 <span class="errorCampo"></span>
             </div>
@@ -137,7 +148,7 @@
 
             <div>
                 <label class="tituloCampo">Volumen:</label>
-                <input type="number" step="0.01" name="volumen" value="<?= $aRespuestas['volumen'] ?>" obligatorio>
+                <input type="number" step="0.01" name="volumen" value="<?= $entradaOK ? "" : $aRespuestas['volumen'] ?>" obligatorio>
                 <span class="errorCampo"><?= $aErrores['volumen'] ?></span>
             </div>
             <br>
@@ -155,23 +166,36 @@
                 if ($entradaOK) { // Si no hubieron errores con los datos
                     // Abrimos otro try/catch para en caso de error con la transaccion poder mostrar igualmente la tabla
                     try {
+                        // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
+                        $statement = <<<EOT
+                        INSERT INTO T02_Departamento VALUES(
+                            :codigo,
+                            :descripcion,
+                            NOW(),
+                            :volumen,
+                            NULL
+                        );
+                        EOT;
+
+                        // Preparamos una sentencia
+                        $consulta = $miDB->prepare($statement);
+
                         // Empieza una transaccion
                         $miDB->beginTransaction();
-
+                        
                         // Insertamos los departamentos
                         foreach ($aCodigos as $key => $value) {
-                            // Ejecuta la sentencia de insercion
-                            $miDB -> exec(<<<EOT
-                                INSERT INTO T02_Departamento VALUES(
-                                    '{$aCodigos[$key]}',
-                                    '{$aRespuestas["descripcion"]}',
-                                    NOW(),
-                                    {$aRespuestas["volumen"]},
-                                    NULL
-                                );
-                                EOT
-                            );
+                            // Creamos un array con los parametros y los valores que deverian llevar
+                            $parametros = [
+                                ":codigo" => $aCodigos[$key],
+                                ":descripcion" => $aRespuestas["descripcion"],
+                                ":volumen" => $aRespuestas["volumen"]
+                            ];
+                            
+                            // Ejecuta la sentencia de insercion insertandole los parametros creados antes
+                            $consulta->execute($parametros);
                         }
+
                         // Si no ha habido ningun error se fijan los cambios en la base de datos
                         $miDB ->commit();
                     } catch (PDOException $error) { // Esto se ejecuta si da error algun exec
@@ -182,38 +206,55 @@
                         echo "<p class=\"error\"><strong>Codigo:</strong> ".$error->getCode()."</p>";
                     }
                 }
-                
-                // Variable con un query para obtener todos los datos de la tabla
-                $query = $miDB->query("SELECT * FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+
+                // Array con el nombre de las columnas que vamos a seleccionar
+                $aColumnas = [
+                    "Codigo" => "T02_CodDepartamento",
+                    "Descripcion" => "T02_DescDepartamento",
+                    "Volumen" => "T02_VolumenDeNegocio",
+                    "FechaCreacion" => "T02_FechaCreacionDepartamento",
+                    "FechaBaja" => "T02_FechaBajaDepartamento"
+                ];
+
+                // Preparamos la consulta
+                $consulta = $miDB->prepare("SELECT ".implode(",", $aColumnas)." FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+
+                // Creamos un array con los parametros y los valores con los que se va a ejecutar
+                $parametros = null;
                 
                 // Esto intenta crear una tabla con los resultados del query
-                if ($query -> execute()) { // Si el query se ejecuta correctamente
+                if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
                     echo "<table>";
                     
 
                     echo "<thead><tr>";
 
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                    for ($i = 0; $i < $query->columnCount(); $i++) { // $i representa el índice de la columna actual
-                        // Obtenemos el nombre de la columna y lo ponemos en la tabla html
-                        $nombreColumna = $query->getColumnMeta($i)["name"];
-                        echo "<th>{$nombreColumna}</th>";
+                    foreach ($aColumnas as $col) {
+                        // Ponemos el nombre de la columna en la tabla html
+                        echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
                     
                     // Obtiene los registros que ha obtenido el query
-                    while ($registro = $query -> fetch(PDO::FETCH_OBJ)) { // Mientras haya mas registros
+                    while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
-                        foreach ($registro as $value) {
-                            echo "<td>$value</td>";
+                        foreach ($aColumnas as $col) {
+                            $valor = $registro->$col;
+
+                            if ($col == $aColumnas["Volumen"]) {
+                                $valor = number_format($valor, decimal_separator:",", thousands_separator:".", decimals:2);
+                            }
+
+                            echo "<td>$valor</td>";
                         }
                         echo "</tr>";
                     }
                     echo "</table>";
 
                     // Mostramos cuantos registros tenia la tabla
-                    echo "<p>Habia {$query->rowCount()} registros.</p>";
+                    echo "<p>Habia {$consulta->rowCount()} registros.</p>";
                 }
                 else { // Ssi da error al hacer el query
                     echo "No se pudo ejecutar la consulta";
@@ -222,6 +263,8 @@
                 echo '<h3 class="error">ERROR SQL:</h3>';
                 echo '<p class="error"><strong>Mensaje:</strong> '.$error->getMessage()."</p>";
                 echo '<p class="error"><strong>Codigo:</strong> '.$error->getCode()."</p>";
+            } finally {
+                unset($miDB);
             }
             echo "</div>";
         ?>
