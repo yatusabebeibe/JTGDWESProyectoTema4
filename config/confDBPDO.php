@@ -8,11 +8,20 @@
 
 const DBHost = "localhost";
 
-# admin
+// admin
 const DBUserRoot = "adminsql";
 const DBPassRoot = "paso";
 
-# tema 4
+//  tema 4
 const DBName = "DBJTGDWESProyectoTema4";
 const DBUser = "userJTGDWESProyectoTema4";
 const DBPass = "paso";
+
+// Array con el nombre de las columnas que vamos a seleccionar
+const aColumnas = [
+    "Codigo" => "T02_CodDepartamento",
+    "Descripcion" => "T02_DescDepartamento",
+    "Volumen" => "T02_VolumenDeNegocio",
+    "FechaCreacion" => "T02_FechaCreacionDepartamento",
+    "FechaBaja" => "T02_FechaBajaDepartamento"
+];

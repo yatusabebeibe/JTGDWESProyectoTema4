@@ -79,24 +79,15 @@
                 // lo inicializo a null para que al hacerlo luego en el if no de error por no estar definido si no pasa el proximo if
                 $parametros = null;
 
-                // Array con el nombre de las columnas que vamos a seleccionar
-                $aColumnas = [
-                    "Codigo" => "T02_CodDepartamento",
-                    "Descripcion" => "T02_DescDepartamento",
-                    "Volumen" => "T02_VolumenDeNegocio",
-                    "FechaCreacion" => "T02_FechaCreacionDepartamento",
-                    "FechaBaja" => "T02_FechaBajaDepartamento"
-                ];
-
                 // String de las columnas que vamos a seleccionar
-                $sColumnas = implode(",", $aColumnas);
+                $sColumnas = implode(",", aColumnas);
 
                 if ($entradaOK && !empty($aRespuestas["descripcion"])) { // Si no hubieron errores con los datos
                     // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
                     $statement = <<<EOF
                     SELECT $sColumnas FROM T02_Departamento
                     WHERE T02_DescDepartamento LIKE :descripcion
-                    ORDER BY {$aColumnas['FechaCreacion']} DESC;
+                    ORDER BY {aColumnas['FechaCreacion']} DESC;
                     EOF;
 
                     $consulta = $miDB->prepare($statement);
@@ -107,7 +98,7 @@
                     
                 } else {
                     // Variable con un query para obtener todos los datos de la tabla
-                    $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY {$aColumnas['FechaCreacion']} DESC");
+                    $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY {aColumnas['FechaCreacion']} DESC");
                 }
                 
                 // Esto intenta crear una tabla con los resultados del query
@@ -118,7 +109,7 @@
                     echo "<thead><tr>";
 
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                    foreach ($aColumnas as $col) {
+                    foreach (aColumnas as $col) {
                         // Ponemos el nombre de la columna en la tabla html
                         echo "<th>{$col}</th>";
                     }
@@ -128,10 +119,10 @@
                     while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
-                        foreach ($aColumnas as $col) {
+                        foreach (aColumnas as $col) {
                             $valor = $registro->$col;
 
-                            if ($col == $aColumnas["Volumen"]) {
+                            if ($col == aColumnas["Volumen"]) {
                                 $valor = number_format($valor, decimal_separator:",", thousands_separator:".", decimals:2);
                             }
 
