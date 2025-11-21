@@ -17,15 +17,12 @@
     
     include_once("../core/231018libreriaValidacion.php");
 
-    // Importamos la configuracion de la DB
-    require_once("../config/confDBPDO.php");
-
-    /*  Constantes para la connexion con la DB.
+    /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
         Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    const DSN = "mysql:host=".DBHost.";dbname=".DBName;
+    require_once("../config/confDBPDO.php");
 
 
     // Variables generales para gestionar los datos del formulario
@@ -98,7 +95,7 @@
                     
                 } else {
                     // Variable con un query para obtener todos los datos de la tabla
-                    $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY {aColumnas['FechaCreacion']} DESC");
+                    $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY ".aColumnas['FechaCreacion']." DESC");
                 }
                 
                 // Esto intenta crear una tabla con los resultados del query

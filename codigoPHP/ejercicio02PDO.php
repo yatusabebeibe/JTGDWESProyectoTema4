@@ -15,15 +15,12 @@
 
     echo "<h1>Mostrar el contenido de la tabla Departamento y el número de registros.</h1>";
 
-    // Importamos la configuracion de la DB
-    require_once("../config/confDBPDO.php");
-
-    /*  Constantes para la connexion con la DB.
+    /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
         Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    const DSN = "mysql:host=".DBHost.";dbname=".DBName;
+    require_once("../config/confDBPDO.php");
 
     echo '<div class="resultado">';
     try {

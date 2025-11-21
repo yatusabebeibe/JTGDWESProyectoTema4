@@ -8,8 +8,6 @@
  */ 
 require_once(dirname(__FILE__) . "/../config/confDBPDO.php");
 
-const DSN = "mysql:host=".DBHost;
-
 if ($config) { // Comprueba que la configuración a sido cargada correctamente
     try {
         // Iniciamos la conexión
