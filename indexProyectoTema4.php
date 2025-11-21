@@ -292,8 +292,8 @@
                     <td>7</td>
                     <td>Página web que toma datos (código y descripción) de un fichero xml y los añade a la tabla Departamento de nuestra base de datos. (IMPORTAR). El fichero importado se encuentra en el directorio .../tmp/ del servidor.</td>
                     <td>
-                        <a href="./codigoPHP/ejercicio07PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio07PDO.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio07PDO.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio07PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio07MySQLi.php" target="_self"><!-- Ejecutar --></a>
