@@ -181,23 +181,27 @@
             </table>
             <?php
             echo "&#8203";
-            // Comprobar si estamos en la URL de explotación
-            if ($_SERVER['HTTP_HOST'] === 'jesustemgal.ieslossauces.es') {
-                echo "<p>No se puede ejecutar desde explotación.</p>";
-            } else {
-                if (isset($_REQUEST["borrar"])) {
-                    include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
-                }
-                if (isset($_REQUEST["crear"])) {
-                    include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
-                }
-                if (isset($_REQUEST["cargar"])) {
-                    include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
-                }
-                if (isset($_REQUEST["todos"])) {
-                    include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
-                    include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
-                    include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+            
+            // Solo ejecutamos si se ha enviado algo por GET o POST
+            if (!empty($_REQUEST)) {
+                // Comprobar si estamos en la URL de explotación
+                if ($_SERVER['HTTP_HOST'] === 'jesustemgal.ieslossauces.es') {
+                    echo "No se puede ejecutar desde explotación.";
+                } else {
+                    if (isset($_REQUEST["borrar"])) {
+                        include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
+                    }
+                    if (isset($_REQUEST["crear"])) {
+                        include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
+                    }
+                    if (isset($_REQUEST["cargar"])) {
+                        include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+                    }
+                    if (isset($_REQUEST["todos"])) {
+                        include_once("./codigoPHP/BorraDBJTGDWESProyectoTema4.php");
+                        include_once("./codigoPHP/CreaDBJTGDWESProyectoTema4.php");
+                        include_once("./codigoPHP/CargaInicialDBJTGDWESProyectoTema4.php");
+                    }
                 }
             }
             ?>
@@ -288,8 +292,8 @@
                     <td>7</td>
                     <td>Página web que toma datos (código y descripción) de un fichero xml y los añade a la tabla Departamento de nuestra base de datos. (IMPORTAR). El fichero importado se encuentra en el directorio .../tmp/ del servidor.</td>
                     <td>
-                        <a href="./codigoPHP/ejercicio07PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio07PDO.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio07PDO.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio07PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio07MySQLi.php" target="_self"><!-- Ejecutar --></a>
@@ -300,8 +304,8 @@
                     <td>8</td>
                     <td>Página web que toma datos (código y descripción) de la tabla Departamento y guarda en un fichero departamento.xml. (COPIA DE SEGURIDAD / EXPORTAR). El fichero exportado se encuentra en el directorio .../tmp/ del servidor.</td>
                     <td>
-                        <a href="./codigoPHP/ejercicio08PDO.php" target="_self"><!-- Ejecutar --></a>
-                        <a href="./mostrarcodigo/muestraEjercicio08PDO.php" target="_self"><!-- Ver código --></a>
+                        <a href="./codigoPHP/ejercicio08PDO.php" target="_self">Ejecutar</a>
+                        <a href="./mostrarcodigo/muestraEjercicio08PDO.php" target="_self">Ver código</a>
                     </td>
                     <td>
                         <a href="./codigoPHP/ejercicio08MySQLi.php" target="_self"><!-- Ejecutar --></a>

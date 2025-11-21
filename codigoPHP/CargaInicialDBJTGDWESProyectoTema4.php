@@ -8,41 +8,36 @@
  */ 
 require_once(dirname(__FILE__) . "/../config/confDBPDO.php");
 
-const DSN = "mysql:host=".DBHost;
+try {
+    // Iniciamos la conexión
+    $conexionPDO = new PDO(DSN, DBUserRoot, DBPass);
 
-if ($config) { // Comprueba que la configuración a sido cargada correctamente
-    try {
-        // Iniciamos la conexión
-        $conexionPDO = new PDO(DSN, DBUser, DBPass);
+    $query = $conexionPDO->prepare("SELECT * FROM T02_Departamento");
 
-        $query = $conexionPDO->prepare("SELECT * FROM T02_Departamento");
+    $query->execute(null);
 
-        $query->execute(null);
+    if ($query->rowCount() == 0) {
+        /** Cargamos el archivo SQL que queremos ejecutar.
+         *  Tenemos que usar dirname(__FILE__) para empezar desde la ruta del archivo actual.
+         *  Si no, al llamar a este archivo desde otro archivo utilizaría la ruta del otro
+         *  archivo y podría no funcionar.
+         *  IMPORTANTE: poner '/' al principio del string con la ruta.
+         */ 
+        $sql = file_get_contents(dirname(__FILE__) . "/../scriptDB/CargaInicialDBJTGDWESProyectoTema4.sql");
 
-        if ($query->rowCount() == 0) {
-            /** Cargamos el archivo SQL que queremos ejecutar.
-             *  Tenemos que usar dirname(__FILE__) para empezar desde la ruta del archivo actual.
-             *  Si no, al llamar a este archivo desde otro archivo utilizaría la ruta del otro
-             *  archivo y podría no funcionar.
-             *  IMPORTANTE: poner '/' al principio del string con la ruta.
-             */ 
-            $sql = file_get_contents(dirname(__FILE__) . "/../scriptDB/CargaInicialDBJTGDWESProyectoTema4.sql");
+        $consulta = $conexionPDO->prepare($sql);
 
-            $consulta = $conexionPDO->prepare($sql);
+        // Ejecutamos el script SQL del archivo
+        $consulta->execute(null);
 
-            // Ejecutamos el script SQL del archivo
-            $consulta->execute(null);
+        // Mensaje de funcionamiento correcto
+        echo "Carga inicial correcta. ";
 
-            // Mensaje de funcionamiento correcto
-            echo "Carga inicial correcta. ";
-
-        } else { // Si devuelve algo, es que ya se ha cargado
-            echo "Error Carga: ya existen datos. ";
-        }
-    } catch (PDOException $error) { // Esto es lo que ocurre si salta un error
-        echo '<p class="error"><strong>Mensaje:</strong> '.$error->getMessage()."</p>";
-        echo '<p class="error"><strong>Codigo:</strong> '.$error->getCode()."</p>";
+    } else { // Si devuelve algo, es que ya se ha cargado
+        echo "Error Carga: ya existen datos. ";
     }
-} else {
-    echo "Error: no se pudo cargar la configuracion";
+} catch (PDOException $error) { // Esto es lo que ocurre si salta un error
+    $conexionPDO=null;
+    echo '<p class="error"><strong>Mensaje:</strong> '.$error->getMessage()."</p>";
+    echo '<p class="error"><strong>Codigo:</strong> '.$error->getCode()."</p>";
 }

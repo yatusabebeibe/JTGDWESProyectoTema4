@@ -17,15 +17,12 @@
     
     include_once("../core/231018libreriaValidacion.php");
 
-    // Importamos la configuracion de la DB
-    require_once("../config/confDBPDO.php");
-
-    /*  Constantes para la connexion con la DB.
+    /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
         Existen tanto `define()` como `const` se pueden usar igual en la mayoria de casos.
         En esta pagina web explican las diferencias y en que casos se usa uno u otro:
            https://mclibre.org/consultar/php/lecciones/php-constantes.html
     */
-    const DSN = "mysql:host=".DBHost.";dbname=".DBName;
+    require_once("../config/confDBPDO.php");
 
 
     // Variables generales para gestionar los datos del formulario
@@ -165,18 +162,9 @@
                     // Aqui ejecuta la sentencia SQL
                     $consulta->execute($parametros);
                 }
-                
-                // Array con el nombre de las columnas que vamos a seleccionar
-                $aColumnas = [
-                    "Codigo" => "T02_CodDepartamento",
-                    "Descripcion" => "T02_DescDepartamento",
-                    "Volumen" => "T02_VolumenDeNegocio",
-                    "FechaCreacion" => "T02_FechaCreacionDepartamento",
-                    "FechaBaja" => "T02_FechaBajaDepartamento"
-                ];
 
                 // Preparamos la consulta
-                $consulta = $miDB->prepare("SELECT ".implode(",", $aColumnas)." FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
+                $consulta = $miDB->prepare("SELECT ".implode(",", aColumnas)." FROM T02_Departamento ORDER BY T02_FechaCreacionDepartamento DESC");
 
                 // Creamos un array con los parametros y los valores con los que se va a ejecutar
                 $parametros = null;
@@ -189,7 +177,7 @@
                     echo "<thead><tr>";
 
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                    foreach ($aColumnas as $col) {
+                    foreach (aColumnas as $col) {
                         // Ponemos el nombre de la columna en la tabla html
                         echo "<th>{$col}</th>";
                     }
@@ -199,10 +187,10 @@
                     while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
-                        foreach ($aColumnas as $col) {
+                        foreach (aColumnas as $col) {
                             $valor = $registro->$col;
 
-                            if ($col == $aColumnas["Volumen"]) {
+                            if ($col == aColumnas["Volumen"]) {
                                 $valor = number_format($valor, decimal_separator:",", thousands_separator:".", decimals:2);
                             }
 

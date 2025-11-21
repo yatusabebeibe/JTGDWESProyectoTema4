@@ -6,15 +6,24 @@
         https://mclibre.org/consultar/php/lecciones/php-constantes.html
 */
 
-const DBHost = "localhost";
+const DBHost = "10.199.10.22";
 
-# admin
+// admin
 const DBUserRoot = "adminsql";
 const DBPassRoot = "paso";
+const DSNRoot = "mysql:host=".DBHost;
 
-# tema 4
+//  tema 4
 const DBName = "DBJTGDWESProyectoTema4";
 const DBUser = "userJTGDWESProyectoTema4";
 const DBPass = "paso";
+const DSN = "mysql:host=".DBHost.";dbname=".DBName;
 
-echo "importado correctamente";
+// Array con el nombre de las columnas que vamos a seleccionar
+const aColumnas = [
+    "Codigo" => "T02_CodDepartamento",
+    "Descripcion" => "T02_DescDepartamento",
+    "Volumen" => "T02_VolumenDeNegocio",
+    "FechaCreacion" => "T02_FechaCreacionDepartamento",
+    "FechaBaja" => "T02_FechaBajaDepartamento"
+];
