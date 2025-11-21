@@ -21,7 +21,7 @@
      *  @since 17/11/2025
      */
 
-    echo "<h1>Busqueda departamentos por descripcion.</h1>";
+    echo "<h1>Exportar departamentos.</h1>";
     
     include_once("../core/231018libreriaValidacion.php");
 
@@ -121,7 +121,7 @@
         ?>
             <!-- Boton para exportar los datos -->
             <input type="submit" name="enviar" value="Exportar datos">
-            <span><?= $entradaOK ? (empty($error) ? "Datos exportados correctamente" : null ) : null ?></span>
+            <span <?=!empty($error)?"class='error'":null?> ><?= $entradaOK ? (empty($error) ? "Datos exportados correctamente" : "Error al exportar datos" ) : null ?></span>
         </form>
     </div>
 </body>
