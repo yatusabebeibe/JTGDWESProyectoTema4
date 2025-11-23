@@ -48,15 +48,15 @@
         <form method="post">
             <?php
             
+            // Obtenemos los datos del archivo json
             $datos = file_get_contents("../tmp/datos.json");
             
-            if ($datos) {
-                try {
-                    // Iniciamos la conexion con la base de datos
-                    $miDB = new PDO(DSN, DBUser, DBPass);
+            try {
+                // Iniciamos la conexion con la base de datos
+                $miDB = new PDO(DSN, DBUser, DBPass);
 
-                    $aJson = json_decode($datos,true);
-                    // var_dump($aJson);
+                if ($datos) { // Comprobamos si hay datos
+                    $aJson = json_decode($datos,true); // Comvertimos los datos del json en un array asociativo
             
                     // String de las columnas que vamos a seleccionar
                     $sColumnas = implode(",", aColumnas);
@@ -73,6 +73,7 @@
                             :fechaBaja
                         );
                         EOT;
+                        // Preparamos la consulta
                         $consulta = $miDB->prepare($statement);
 
                         foreach ($aJson as $departamento) {
@@ -91,57 +92,67 @@
                             }
                         }
                     }
-
-                    // lo inicializo a null para que el if no de error por no estar definido
-                    $aParametros = null;
-
-                    // String de las columnas que vamos a seleccionar
-                    $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY ".aColumnas['Descripcion']." DESC");
-                    
-                    // Esto intenta crear una tabla con los resultados del query
-                    if ($consulta -> execute($aParametros)) { // Si el query se ejecuta correctamente
-            
-                        echo "<table>";
-                        echo "<thead><tr>";
-            
-                        // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
-                        foreach (aColumnas as $col) {
-                            // Ponemos el nombre de la columna en la tabla html
-                            echo "<th>{$col}</th>";
-                        }
-                        echo "</tr></thead>";
-            
-                        // Obtiene los registros que ha obtenido el query
-                        while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
-                            echo "<tr>";
-                            // Mete cada registro en la tabla
-                            foreach (aColumnas as $col) {
-                                $valor = $registro->$col;
-            
-                                echo "<td>$valor</td>";
-                            }
-                            echo "</tr>";
-                        }
-                        echo "</table>";
-            
-                        // Mostramos cuantos registros tenia la tabla
-                        echo "<p>Habia {$consulta->rowCount()} registros.</p>";
-                    }
-                    else { // Ssi da error al hacer el query
-                        echo "No se pudo ejecutar la consulta";
-                    }
-                } catch (PDOException $error) { // Esto se ejecuta si da error al iniciar la conexion, insertar los datos, o hacer el query
-                    echo '<h3 class="error">ERROR SQL:</h3>';
-                    echo '<p class="error"><strong>Mensaje:</strong> '.$error->getMessage()."</p>";
-                    echo '<p class="error"><strong>Codigo:</strong> '.$error->getCode()."</p>";
                 }
-            } else {
-                echo "<p class='error'>Error al obtener el archivo</p>";
+
+                // lo inicializo a null para que el if no de error por no estar definido
+                $aParametros = null;
+
+                // String de las columnas que vamos a seleccionar
+                $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY ".aColumnas['Descripcion']." DESC");
+                
+                // Esto intenta crear una tabla con los resultados del query
+                if ($consulta -> execute($aParametros)) { // Si el query se ejecuta correctamente
+        
+                    echo "<table>";
+                    echo "<thead><tr>";
+        
+                    // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
+                    foreach (aColumnas as $col) {
+                        // Ponemos el nombre de la columna en la tabla html
+                        echo "<th>{$col}</th>";
+                    }
+                    echo "</tr></thead>";
+        
+                    // Obtiene los registros que ha obtenido el query
+                    while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
+                        echo "<tr>";
+                        // Mete cada registro en la tabla
+                        foreach (aColumnas as $col) {
+                            $valor = $registro->$col;
+        
+                            echo "<td>$valor</td>";
+                        }
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+        
+                    // Mostramos cuantos registros tenia la tabla
+                    echo "<p>Habia {$consulta->rowCount()} registros.</p>";
+                }
+                else { // Ssi da error al hacer el query
+                    echo "No se pudo ejecutar la consulta";
+                }
+            } catch (PDOException $error) { // Esto se ejecuta si da error al iniciar la conexion, insertar los datos, o hacer el query
+                echo '<h3 class="error">ERROR SQL:</h3>';
+                echo '<p class="error"><strong>Mensaje:</strong> '.$error->getMessage()."</p>";
+                echo '<p class="error"><strong>Codigo:</strong> '.$error->getCode()."</p>";
             }
             ?>
             <!-- Boton para exportar los datos -->
             <input type="submit" name="enviar" value="Importar datos">
-            <span <?=!empty($error)?"class='error'":null?> ><?= $entradaOK ? (empty($error) ? "Datos Importados correctamente" : "Datos duplicados o incorrectos" ) : null ?></span>
+            <span <?=!empty($error)?"class='error'":null?> >
+                <?=
+                    $entradaOK // si la entrada esta bien
+                    ? ($datos // si hay datos
+                        ? (empty($error) // si NO hay errores
+                            ? "Datos Importados correctamente."
+                            : "Algunos datos no se han importado. Datos duplicados o incorrectos."
+                        )
+                        : "Error al obtener el archivo."
+                    )
+                    : null
+                ?>
+            </span>
         </form>
     </div>
 </body>
