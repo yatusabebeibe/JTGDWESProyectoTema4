@@ -163,6 +163,10 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td><a target="_self" href="./mostrarcodigo/muestraConfDBPDO.php">Configuracion</a></td>
+                        <td><a target="_self" href="#"></a></td>
+                    </tr>
+                    <tr>
                         <td><a target="_self" href="./mostrarcodigo/borrarDB.php">Borrado</a></td>
                         <td><input type="submit" value="Ejecutar" name="borrar"></td>
                     </tr>
