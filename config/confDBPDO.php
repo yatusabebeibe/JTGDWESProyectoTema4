@@ -6,14 +6,14 @@
         https://mclibre.org/consultar/php/lecciones/php-constantes.html
 */
 
-const DBHost = "10.199.10.22";
+const DBHost = "10.199.11.252";
 
 // admin
 const DBUserRoot = "adminsql";
 const DBPassRoot = "paso";
 const DSNRoot = "mysql:host=".DBHost;
 
-//  tema 4
+// usuario
 const DBName = "DBJTGDWESProyectoTema4";
 const DBUser = "userJTGDWESProyectoTema4";
 const DBPass = "paso";
