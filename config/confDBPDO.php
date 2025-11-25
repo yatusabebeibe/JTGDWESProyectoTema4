@@ -6,7 +6,7 @@
         https://mclibre.org/consultar/php/lecciones/php-constantes.html
 */
 
-const DBHost = "10.199.10.22";
+const DBHost = "10.199.11.252";
 
 // admin
 const DBUserRoot = "adminsql";
