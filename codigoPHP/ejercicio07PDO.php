@@ -22,7 +22,7 @@
      */
 
     echo "<h1>Importar departamentos.</h1>";
-    
+
     include_once("../core/231018libreriaValidacion.php");
 
     /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
@@ -47,17 +47,17 @@
     <div class="resultado">
         <form method="post">
             <?php
-            
+
             // Obtenemos los datos del archivo json
             $datos = file_get_contents("../tmp/datos.json");
-            
+
             try {
                 // Iniciamos la conexion con la base de datos
                 $miDB = new PDO(DSN, DBUser, DBPass);
 
                 if ($datos) { // Comprobamos si hay datos
                     $aJson = json_decode($datos,true); // Comvertimos los datos del json en un array asociativo
-            
+
                     // String de las columnas que vamos a seleccionar
                     $sColumnas = implode(",", aColumnas);
 
@@ -99,33 +99,33 @@
 
                 // String de las columnas que vamos a seleccionar
                 $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY ".aColumnas['Descripcion']." DESC");
-                
+
                 // Esto intenta crear una tabla con los resultados del query
                 if ($consulta -> execute($aParametros)) { // Si el query se ejecuta correctamente
-        
+
                     echo "<table>";
                     echo "<thead><tr>";
-        
+
                     // Contamos cuantas columnas tiene la tabla sacada por el query y la recorremos
                     foreach (aColumnas as $col) {
                         // Ponemos el nombre de la columna en la tabla html
                         echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
-        
+
                     // Obtiene los registros que ha obtenido el query
                     while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";
                         // Mete cada registro en la tabla
                         foreach (aColumnas as $col) {
                             $valor = $registro->$col;
-        
+
                             echo "<td>$valor</td>";
                         }
                         echo "</tr>";
                     }
                     echo "</table>";
-        
+
                     // Mostramos cuantos registros tenia la tabla
                     echo "<p>Habia {$consulta->rowCount()} registros.</p>";
                 }

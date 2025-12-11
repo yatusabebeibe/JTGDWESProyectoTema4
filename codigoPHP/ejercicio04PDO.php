@@ -14,7 +14,7 @@
      */
 
     echo "<h1>Busqueda departamentos por descripcion.</h1>";
-    
+
     include_once("../core/231018libreriaValidacion.php");
 
     /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
@@ -92,16 +92,16 @@
                     $parametros = [
                         ":descripcion" => "%".$aRespuestas["descripcion"]."%"
                     ];
-                    
+
                 } else {
                     // Variable con un query para obtener todos los datos de la tabla
                     $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY ".aColumnas['FechaCreacion']." DESC");
                 }
-                
+
                 // Esto intenta crear una tabla con los resultados del query
                 if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
                     echo "<table>";
-                    
+
 
                     echo "<thead><tr>";
 
@@ -111,7 +111,7 @@
                         echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
-                    
+
                     // Obtiene los registros que ha obtenido el query
                     while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";

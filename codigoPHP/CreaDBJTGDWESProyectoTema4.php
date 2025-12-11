@@ -5,7 +5,7 @@
  *  Si no, al llamar a este archivo desde otro archivo utilizaría la ruta del otro
  *  archivo y podría no funcionar.
  *  IMPORTANTE: poner '/' al principio del string con la ruta.
- */ 
+ */
 require_once(dirname(__FILE__) . "/../config/confDBPDO.php");
 
 try {
@@ -17,7 +17,7 @@ try {
      *  Si no, al llamar a este archivo desde otro archivo utilizaría la ruta del otro
      *  archivo y podría no funcionar.
      *  IMPORTANTE: poner '/' al principio del string con la ruta.
-     */ 
+     */
     $sql = file_get_contents(dirname(__FILE__) . "/../scriptDB/CreaDBJTGDWESProyectoTema4.sql");
 
     $consulta = $conexionPDO->prepare($sql);
