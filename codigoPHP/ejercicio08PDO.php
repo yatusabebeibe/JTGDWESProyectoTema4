@@ -72,6 +72,8 @@
                 // Los convertimos a un string JSON
                 $sJson = json_encode($aObjResultados, JSON_PRETTY_PRINT);
 
+                echo "<pre>$sJson</pre>";
+
                 file_put_contents("../tmp/datos.json",$sJson);
             } catch (PDOException $error) { // Esto se ejecuta si da error al exportar la DB
                 $entradaOK = false;
