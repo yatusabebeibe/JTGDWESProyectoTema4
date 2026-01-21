@@ -14,7 +14,7 @@
      */
 
     echo "<h1>Busqueda departamentos por descripcion.</h1>";
-    
+
     include_once("../core/231018libreriaValidacion.php");
 
     /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
@@ -80,11 +80,12 @@
                 $sColumnas = implode(",", aColumnas);
 
                 if ($entradaOK && !empty($aRespuestas["descripcion"])) { // Si no hubieron errores con los datos
+                    $colFechaCreacion = aColumnas['FechaCreacion'];
                     // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
                     $statement = <<<EOF
                     SELECT $sColumnas FROM T02_Departamento
                     WHERE T02_DescDepartamento LIKE :descripcion
-                    ORDER BY {aColumnas['FechaCreacion']} DESC;
+                    ORDER BY $colFechaCreacion DESC;
                     EOF;
 
                     $consulta = $miDB->prepare($statement);
@@ -92,16 +93,16 @@
                     $parametros = [
                         ":descripcion" => "%".$aRespuestas["descripcion"]."%"
                     ];
-                    
+
                 } else {
                     // Variable con un query para obtener todos los datos de la tabla
                     $consulta = $miDB->prepare("SELECT $sColumnas FROM T02_Departamento ORDER BY ".aColumnas['FechaCreacion']." DESC");
                 }
-                
+
                 // Esto intenta crear una tabla con los resultados del query
                 if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
                     echo "<table>";
-                    
+
 
                     echo "<thead><tr>";
 
@@ -111,7 +112,7 @@
                         echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
-                    
+
                     // Obtiene los registros que ha obtenido el query
                     while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";

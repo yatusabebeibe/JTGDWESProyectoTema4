@@ -32,11 +32,11 @@
 
         // Creamos un array con los parametros y los valores con los que se va a ejecutar
         $parametros = null;
-        
+
         // Esto intenta crear una tabla con los resultados del query
         if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
             echo "<table>";
-            
+
 
             echo "<thead><tr>";
 
@@ -46,7 +46,7 @@
                 echo "<th>{$col}</th>";
             }
             echo "</tr></thead>";
-            
+
             // Obtiene los registros que ha obtenido el query
             while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                 echo "<tr>";

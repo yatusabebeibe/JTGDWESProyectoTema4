@@ -14,7 +14,7 @@
      */
 
     echo "<h1>Insertar 3 elementos a la vez.</h1>";
-    
+
     include_once("../core/231018libreriaValidacion.php");
 
     /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
@@ -171,7 +171,7 @@
 
                         // Preparamos una sentencia
                         $consulta = $miDB->prepare($statement);
-                        
+
                         // Insertamos los departamentos
                         foreach ($aDepartamentosNuevos as $key => $value) {
                             // Creamos un array con los parametros y los valores que deverian llevar
@@ -180,7 +180,7 @@
                                 ":descripcion" => $aRespuestas["descripcion"],
                                 ":volumen" => $aRespuestas["volumen"]
                             ];
-                            
+
                             // Ejecuta la sentencia de insercion insertandole los parametros creados antes
                             $consulta->execute($parametros);
                         }
@@ -196,11 +196,11 @@
 
                 // Creamos un array con los parametros y los valores con los que se va a ejecutar
                 $parametros = null;
-                
+
                 // Esto intenta crear una tabla con los resultados del query
                 if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
                     echo "<table>";
-                    
+
 
                     echo "<thead><tr>";
 
@@ -210,7 +210,7 @@
                         echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
-                    
+
                     // Obtiene los registros que ha obtenido el query
                     while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";

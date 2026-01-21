@@ -14,7 +14,7 @@
      */
 
     echo "<h1>Formulario añadir departamento.</h1>";
-    
+
     include_once("../core/231018libreriaValidacion.php");
 
     /*  Importamos la configuracion de la DB. Contiene constantes para la connexion con la DB.
@@ -38,7 +38,7 @@
         $aRespuestas["codigo"] = $_REQUEST['codigo'];
         $aRespuestas["descripcion"] = $_REQUEST['descripcion'];
         $aRespuestas["volumen"] = $_REQUEST['volumen'];
-        
+
         // Validamos todos los datos:
 
         // Comprobamos que el codigo no este vacio y tenga exactamente 3 letras
@@ -104,7 +104,7 @@
                 <span class="errorCampo"><?= $aErrores['codigo'] ?></span>
             </div>
             <br>
-            
+
             <div>
                 <label class="tituloCampo">Descripcion:</label>
                 <input type="text" name="descripcion" value="<?= $entradaOK ? "" : $aRespuestas['descripcion'] ?>" obligatorio>
@@ -168,11 +168,11 @@
 
                 // Creamos un array con los parametros y los valores con los que se va a ejecutar
                 $parametros = null;
-                
+
                 // Esto intenta crear una tabla con los resultados del query
                 if ($consulta -> execute($parametros)) { // Si el query se ejecuta correctamente
                     echo "<table>";
-                    
+
 
                     echo "<thead><tr>";
 
@@ -182,7 +182,7 @@
                         echo "<th>{$col}</th>";
                     }
                     echo "</tr></thead>";
-                    
+
                     // Obtiene los registros que ha obtenido el query
                     while ($registro = $consulta -> fetchObject()) { // Mientras haya mas registros
                         echo "<tr>";

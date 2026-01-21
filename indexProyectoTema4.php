@@ -89,14 +89,18 @@
         a:hover {
             color: #005fa3;
         }
+        :root {
+            --altoHeader: 162px;
+            --altoFooter: 80px;
+        }
         footer {
-            padding-top: 25px;
+            padding-top: 15px;
             margin: auto;
             background-color: #459650;
             text-align: center;
-            height: 150px;
+            height: var(--altoFooter);
             color: white;
-            
+
             a {
                 text-decoration: aquamarine wavy underline;
                 color: aquamarine;
@@ -107,6 +111,19 @@
                 mix-blend-mode: multiply;
                 text-decoration: none;
             }
+            p {line-height: 30px; display: inline-block;}
+            span {margin-right: 15px;}
+            img {
+                display: inline-block;
+                height: 25px;
+                translate: 0 25%;
+                transition: all .3s ease-in-out;
+            }
+            span img:hover {transform: scale(1.15);}
+            span > a {text-decoration: none;}
+        }
+        main {
+            min-height: calc(100vh - var(--altoHeader) - var(--altoFooter) - 60px);
         }
         tr > td > a {line-height: 14px;}
         table > * > tr > *  {text-align: center;}
@@ -130,7 +147,7 @@
                     width: 100%;
 
                     cursor: pointer;
-                    
+
                     font-size: 16px;
                     line-height: 14px;
                     text-decoration: none;
@@ -185,7 +202,7 @@
             </table>
             <?php
             echo "&#8203";
-            
+
             // Solo ejecutamos si se ha enviado algo por GET o POST
             if (!empty($_REQUEST)) {
                 // Comprobar si estamos en la URL de explotación
@@ -320,7 +337,12 @@
         </table>
     </main>
     <!-- 😼 -->
-    <footer><a href="../../" target="_self">Jesús Temprano Gallego</a> | 30/10/2025</footer>
+    <footer>
+        <span><a href="https://github.com/yatusabebeibe/JTGDWESProyectoTema4/" target="_blank">
+            <img src="./webroot/images/github.svg">
+        </a></span>
+        <p><a href="../../" target="_self">Jesús Temprano Gallego</a> | 17/12/2025</p>
+    </footer>
     <!-- 😼 -->
     <!-- muxixima glasia alvelto pol el marivilliosiximo achetemeele que te paxo chatgepete -->
      <script>

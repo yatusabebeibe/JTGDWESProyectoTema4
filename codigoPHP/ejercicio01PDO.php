@@ -39,22 +39,22 @@
         $miDB = new PDO(DSN, DBUser, "Contraseña Incorrecta");
 
     } catch (PDOException $error) { // Si la connexion tira un error `PDOException` ejecuta este codigo:
-        
+
         // Mensaje del error mas facil de leer:
         echo "Mensaje de error: ".$error->getMessage()."<br>";
-        
+
         /*  Codigo del error.
             Listado para ver que significa cada error:
                https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html
         */
         echo "Codigo de error: ".$error->getCode()."<br>";
     }
-    
+
     // Demostración de conexión con credenciales correctas.
     echo "<h2>Ejemplo Bien:</h2>";
     try {
         $miDB = new PDO(DSN, DBUser, DBPass);
-        
+
         // Recorremos la lista de atributos y consultamos su valor.
         foreach ($atributos as $atributo) {
             // Se utiliza un try/catch por cada atributo porque algunos son soportados.
@@ -72,5 +72,5 @@
         echo "Mensaje: ".$error->getMessage()."<br>";
         echo "Codigo: ".$error->getCode()."<br>";
     }
-    
+
 ?>
