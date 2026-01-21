@@ -80,11 +80,12 @@
                 $sColumnas = implode(",", aColumnas);
 
                 if ($entradaOK && !empty($aRespuestas["descripcion"])) { // Si no hubieron errores con los datos
+                    $colFechaCreacion = aColumnas['FechaCreacion'];
                     // Variable en formato heredoc con la sentencia SQL con los parametros necesarios
                     $statement = <<<EOF
                     SELECT $sColumnas FROM T02_Departamento
                     WHERE T02_DescDepartamento LIKE :descripcion
-                    ORDER BY {aColumnas['FechaCreacion']} DESC;
+                    ORDER BY $colFechaCreacion DESC;
                     EOF;
 
                     $consulta = $miDB->prepare($statement);
